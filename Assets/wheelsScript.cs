@@ -1,17 +1,29 @@
 using UnityEngine;
 
-public class wheelsScript : MonoBehaviour
+public class wheel : MonoBehaviour
 {
     public WheelCollider wheelCollider;
     public Transform wheelMesh;
     public bool wheelTurn;
 
+    float currentSteerAngle;
+
     void Update()
     {
-        if (wheelTurn == true)
+        UpdateVisualRotation();
+    }
+
+    void UpdateVisualRotation()
+    {
+        if (wheelTurn)
         {
-            wheelMesh.localEulerAngles = new Vector3(wheelMesh.localEulerAngles.x, wheelCollider.steerAngle - wheelMesh.localEulerAngles.z, wheelMesh.localEulerAngles.z);
+            float targetAngle = wheelCollider.steerAngle;
+            currentSteerAngle = Mathf.LerpAngle(currentSteerAngle, targetAngle, Time.deltaTime * 10f); //Dostosowanie jak szybko ma ruszaæ siê ko³o: zmieniamy 10f
+            Vector3 localEuler = wheelMesh.localEulerAngles;
+            wheelMesh.localEulerAngles = new Vector3(localEuler.x, currentSteerAngle, localEuler.z);
         }
-        wheelMesh.Rotate(wheelCollider.rpm / 60 * 360 * Time.deltaTime, 0 , 0);
+
+        float rotationThisFrame = wheelCollider.rpm / 60f * 360f * Time.deltaTime;
+        wheelMesh.Rotate(rotationThisFrame, 0f, 0f);
     }
 }
