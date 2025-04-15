@@ -4,7 +4,7 @@ public class carScript : MonoBehaviour
 {
     public Rigidbody rigid;
     public WheelCollider frontLeft, frontRight, rearLeft, rearRight;
-    public float drivespeed = 2400f;
+    public float drivespeed = 24000f;
     public float steerspeed = 20f;
     public float brakeForce = 60000f;
     public float handbrakeForce = 150000f;
@@ -14,10 +14,10 @@ public class carScript : MonoBehaviour
     bool isHandBraking;
     bool isBraking;
 
-    public TrailRenderer skidLeft;
-    public TrailRenderer skidRight;
-    public ParticleSystem smokeLeft;
-    public ParticleSystem smokeRight;
+    //public TrailRenderer skidLeft;
+    //public TrailRenderer skidRight;
+    //public ParticleSystem smokeLeft;
+    //public ParticleSystem smokeRight;
 
     void Start()
     {
@@ -26,8 +26,8 @@ public class carScript : MonoBehaviour
         SetWheelFriction(rearLeft);
         SetWheelFriction(rearRight);
 
-        if (smokeLeft != null) smokeLeft.Stop();
-        if (smokeRight != null) smokeRight.Stop();
+        //if (smokeLeft != null) smokeLeft.Stop();
+        //if (smokeRight != null) smokeRight.Stop();
     }
 
     void Update()
@@ -49,6 +49,8 @@ public class carScript : MonoBehaviour
 
         rearLeft.motorTorque = motor;
         rearRight.motorTorque = motor;
+        //frontLeft.motorTorque = motor;
+        //frontRight.motorTorque = motor;
 
         frontLeft.steerAngle = steerspeed * horizontalInput;
         frontRight.steerAngle = steerspeed * horizontalInput;
@@ -65,18 +67,18 @@ public class carScript : MonoBehaviour
             rearLeft.brakeTorque = brakeForce;
             rearRight.brakeTorque = brakeForce;
 
-            DisableSkidEffects();
+            //DisableSkidEffects();
         }
         else if (isHandBraking)
         {
             rearLeft.brakeTorque = handbrakeForce;
             rearRight.brakeTorque = handbrakeForce;
 
-            EnableSkidEffects();
+            //EnableSkidEffects();
         }
         else
         {
-            DisableSkidEffects();
+            //DisableSkidEffects();
         }
     }
 
@@ -92,19 +94,19 @@ public class carScript : MonoBehaviour
         wheel.sidewaysFriction = sidewaysFriction;
     }
 
-    void EnableSkidEffects()
-    {
-        if (skidLeft != null) skidLeft.emitting = true;
-        if (skidRight != null) skidRight.emitting = true;
-        if (smokeLeft != null && !smokeLeft.isPlaying) smokeLeft.Play();
-        if (smokeRight != null && !smokeRight.isPlaying) smokeRight.Play();
-    }
+    //void EnableSkidEffects()
+    //{
+    //    if (skidLeft != null) skidLeft.emitting = true;
+    //    if (skidRight != null) skidRight.emitting = true;
+    //    if (smokeLeft != null && !smokeLeft.isPlaying) smokeLeft.Play();
+    //    if (smokeRight != null && !smokeRight.isPlaying) smokeRight.Play();
+    //}
 
-    void DisableSkidEffects()
-    {
-        if (skidLeft != null) skidLeft.emitting = false;
-        if (skidRight != null) skidRight.emitting = false;
-        if (smokeLeft != null && smokeLeft.isPlaying) smokeLeft.Stop();
-        if (smokeRight != null && smokeRight.isPlaying) smokeRight.Stop();
-    }
+    //void DisableSkidEffects()
+    //{
+    //    if (skidLeft != null) skidLeft.emitting = false;
+    //    if (skidRight != null) skidRight.emitting = false;
+    //    if (smokeLeft != null && smokeLeft.isPlaying) smokeLeft.Stop();
+    //    if (smokeRight != null && smokeRight.isPlaying) smokeRight.Stop();
+    //}
 }

@@ -286,7 +286,7 @@ Transform:
   m_GameObject: {fileID: 146354667}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.0040016, y: 1, z: -4}
+  m_LocalPosition: {x: 1, y: 1, z: -4}
   m_LocalScale: {x: 2, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -449,13 +449,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13052598, y: -0, z: -0, w: 0.99144495}
-  m_LocalPosition: {x: -1.25, y: 5.258819, z: -10.965926}
+  m_LocalRotation: {x: 0.1294093, y: -0.1294093, z: -0.01703704, w: 0.98296297}
+  m_LocalPosition: {x: 3.75, y: 5.258819, z: -10.965926}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 555642679}
-  m_LocalEulerAnglesHint: {x: 15, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 14.477, y: -15.504, z: -3.967}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -720,15 +720,11 @@ MonoBehaviour:
   frontRight: {fileID: 1988388155}
   rearLeft: {fileID: 146354668}
   rearRight: {fileID: 231266233}
-  drivespeed: 5000
-  steerspeed: 35
-  brakeForce: 2000
+  drivespeed: 12000
+  steerspeed: 25
+  brakeForce: 3000
   handbrakeForce: 20000
   reverseSpeedThreshold: 5
-  skidLeft: {fileID: 0}
-  skidRight: {fileID: 0}
-  smokeLeft: {fileID: 0}
-  smokeRight: {fileID: 0}
 --- !u!54 &555642678
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -737,7 +733,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 555642676}
   serializedVersion: 4
-  m_Mass: 4000
+  m_Mass: 8000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
