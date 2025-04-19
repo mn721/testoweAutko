@@ -54,6 +54,7 @@ m_ResolvedPackages:
     - 1.1.3
     - 1.1.4
     - 1.1.5
+    - 1.1.6
     - 2.0.0-pre.3
     - 2.0.0-pre.4
     - 2.0.0
@@ -61,9 +62,11 @@ m_ResolvedPackages:
     - 2.0.4
     - 2.0.5
     - 2.0.6
+    - 2.0.7
     compatible:
     - 2.0.6
-    recommended: 2.0.6
+    - 2.0.7
+    recommended: 2.0.7
     deprecated: []
   dependencies:
   - name: com.unity.modules.ai
@@ -387,11 +390,13 @@ m_ResolvedPackages:
     - 3.0.31
     - 3.0.34
     - 3.0.35
+    - 3.0.36
     compatible:
     - 3.0.31
     - 3.0.34
     - 3.0.35
-    recommended: 3.0.35
+    - 3.0.36
+    recommended: 3.0.36
     deprecated: []
   dependencies:
   - name: com.unity.ext.nunit
@@ -4873,9 +4878,13 @@ m_ResolvedPackages:
     - 1.8.17
     - 1.8.18
     - 1.8.19
+    - 1.8.20
+    - 1.8.21
     compatible:
     - 1.8.19
-    recommended: 1.8.19
+    - 1.8.20
+    - 1.8.21
+    recommended: 1.8.21
     deprecated: []
   dependencies:
   - name: com.unity.mathematics
@@ -5125,13 +5134,15 @@ m_ResolvedPackages:
     - 2.5.1
     - 2.5.2
     - 2.5.3
+    - 2.5.7
     - 2.6.0-exp.2
     compatible:
     - 2.5.1
     - 2.5.2
     - 2.5.3
+    - 2.5.7
     - 2.6.0-exp.2
-    recommended: 2.5.3
+    recommended: 2.5.7
     deprecated: []
   dependencies:
   - name: com.unity.burst
