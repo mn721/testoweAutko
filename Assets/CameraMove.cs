@@ -2,44 +2,26 @@ using UnityEngine;
 
 public class CameraSwitcher : MonoBehaviour
 {
-    public Transform defaultView;
-    public Transform leftView;
-    public Transform rightView;
-    public Transform frontView;
-
-    private Transform currentTarget;
-    private bool overrideView = false;
-
-    void Start()
-    {
-        currentTarget = defaultView;
-    }
+    public Transform[] cameraPositions;
+    public Camera cam;
+    private int currentIndex = 0;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            currentTarget = leftView;
-            overrideView = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.L))
-        {
-            currentTarget = rightView;
-            overrideView = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.K))
-        {
-            currentTarget = frontView;
-            overrideView = true;
-        }
+        SetCameraPosition(3);
 
-        if (!Input.GetKey(KeyCode.J) && !Input.GetKey(KeyCode.K) && !Input.GetKey(KeyCode.L))
-        {
-            currentTarget = defaultView;
-            overrideView = false;
-        }
+        if (Input.GetKey(KeyCode.J)) SetCameraPosition(0);
+        if (Input.GetKey(KeyCode.K)) SetCameraPosition(1);
+        if (Input.GetKey(KeyCode.L)) SetCameraPosition(2);
+    }
 
-        transform.position = currentTarget.position;
-        transform.rotation = currentTarget.rotation;
+    void SetCameraPosition(int index)
+    {
+        if (index < cameraPositions.Length)
+        {
+            currentIndex = index;
+            cam.transform.position = cameraPositions[index].position;
+            cam.transform.rotation = cameraPositions[index].rotation;
+        }
     }
 }
