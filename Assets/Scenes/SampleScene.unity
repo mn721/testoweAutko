@@ -756,6 +756,7 @@ MonoBehaviour:
   brakeForce: 3000
   handbrakeForce: 20000
   reverseSpeedThreshold: 5
+  currentSpeed: 0
 --- !u!54 &555642678
 Rigidbody:
   m_ObjectHideFlags: 0
