@@ -1,53 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Test : MonoBehaviour
+public class SimpleGearbox : MonoBehaviour
 {
-    // The RPMs
-    public int RPM;
-    public int MaxRPM;
-    public int ChangeRPM;
+    public float[] gearSpeedLimits = { 20f, 40f, 60f, 90f, 130f };
+    public int currentGear = 0;
+    public float acceleration = 10f;
+    public float deceleration = 15f;
+    public float currentSpeed = 0f;
 
-    // This is the actual GearBox
-    public float[] Gearbox;
-    public int CurrentGear;
-    public bool CanShiftGear = false;
-
-    // The vehicle Speed
-    public float Speed;
-    public Rigidbody RB;
-    public float Torque;
-
-    private void Update()
+    void Update()
     {
-        // It checks if the RPMs are the desired ones and if you can shift
-        // UpShift
-        if (RPM >= ChangeRPM && CanShiftGear && CurrentGear != Gearbox.Length - 1)
-        { CurrentGear++; CanShiftGear = false; }
-        //DownShift
-
-        if (RPM <= 2000f && CanShiftGear && CurrentGear != 0)
-        { CurrentGear--; CanShiftGear = false; }
-        // Takes Car Of the boolean
-
-        if (RPM < ChangeRPM)
-        { CanShiftGear = true; }
-        // Once you have reached the last gear ypu can not shift
-
-        if (CurrentGear == Gearbox.Length - 1)
-        { CanShiftGear = false; }
-        // Speed
-
-        Speed = RB.linearVelocity.magnitude;
-        GearBox();
+        HandleGearChange();
+        HandleAcceleration();
     }
 
-    void GearBox()
+    void HandleGearChange()
     {
-        if (Speed >= Gearbox[CurrentGear])
-        { Torque = 0f; }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (currentGear < gearSpeedLimits.Length - 1)
+                currentGear++;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (currentGear > 0)
+                currentGear--;
+        }
+    }
+
+    void HandleAcceleration()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            currentSpeed += acceleration * Time.deltaTime;
+
+            if (currentSpeed > gearSpeedLimits[currentGear])
+                currentSpeed = gearSpeedLimits[currentGear];
+        }
         else
-        { Torque = 1f; }
+        {
+            currentSpeed -= deceleration * Time.deltaTime;
+            if (currentSpeed < 0)
+                currentSpeed = 0;
+        }
+        transform.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
     }
 }
