@@ -3,7 +3,7 @@ using UnityEngine;
 public class carScript : MonoBehaviour
 {
     public Rigidbody rigid;
-    public WheelCollider frontLeft, frontRight, rearLeft, rearRight;
+    public WheelCollider FrontLeftWheel, FrontRightWheel, RearLeftWheel, RearRightWheel;
     public float drivespeed = 24000f;
     public float steerspeed = 20f;
     public float brakeForce = 60000f;
@@ -19,10 +19,10 @@ public class carScript : MonoBehaviour
 
     void Start()
     {
-        SetWheelFriction(frontLeft);
-        SetWheelFriction(frontRight);
-        SetWheelFriction(rearLeft);
-        SetWheelFriction(rearRight);
+        SetWheelFriction(FrontLeftWheel);
+        SetWheelFriction(FrontRightWheel);
+        SetWheelFriction(RearLeftWheel);
+        SetWheelFriction(RearRightWheel);
     }
 
     void Update()
@@ -57,30 +57,30 @@ public class carScript : MonoBehaviour
             motor = -drivespeed;
         }
 
-        rearLeft.motorTorque = motor;
-        rearRight.motorTorque = motor;
+        RearLeftWheel.motorTorque = motor;
+        RearRightWheel.motorTorque = motor;
         //frontLeft.motorTorque = motor;
         //frontRight.motorTorque = motor;
 
-        frontLeft.steerAngle = steerspeed * horizontalInput;
-        frontRight.steerAngle = steerspeed * horizontalInput;
+        FrontLeftWheel.steerAngle = steerspeed * horizontalInput;
+        FrontRightWheel.steerAngle = steerspeed * horizontalInput;
 
-        frontLeft.brakeTorque = 0;
-        frontRight.brakeTorque = 0;
-        rearLeft.brakeTorque = 0;
-        rearRight.brakeTorque = 0;
+        FrontLeftWheel.brakeTorque = 0;
+        FrontRightWheel.brakeTorque = 0;
+        RearLeftWheel.brakeTorque = 0;
+        RearRightWheel.brakeTorque = 0;
 
         if (isBraking)
         {
-            frontLeft.brakeTorque = brakeForce;
-            frontRight.brakeTorque = brakeForce;
-            rearLeft.brakeTorque = brakeForce;
-            rearRight.brakeTorque = brakeForce;
+            FrontLeftWheel.brakeTorque = brakeForce;
+            FrontRightWheel.brakeTorque = brakeForce;
+            RearLeftWheel.brakeTorque = brakeForce;
+            RearRightWheel.brakeTorque = brakeForce;
         }
         else if (isHandBraking)
         {
-            rearLeft.brakeTorque = handbrakeForce;
-            rearRight.brakeTorque = handbrakeForce;
+            RearLeftWheel.brakeTorque = handbrakeForce;
+            RearRightWheel.brakeTorque = handbrakeForce;
         }
     }
 
