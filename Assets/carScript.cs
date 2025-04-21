@@ -23,6 +23,7 @@ public class carScript : MonoBehaviour
         SetWheelFriction(FrontRightWheel);
         SetWheelFriction(RearLeftWheel);
         SetWheelFriction(RearRightWheel);
+        GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -0.2f, -0.1f);
     }
 
     void Update()
@@ -82,6 +83,13 @@ public class carScript : MonoBehaviour
             RearLeftWheel.brakeTorque = handbrakeForce;
             RearRightWheel.brakeTorque = handbrakeForce;
         }
+
+        Vector3 euler = transform.eulerAngles;
+        euler.z = 0f; // reset przechy³u
+        transform.eulerAngles = euler;
+
+        AntiRoll(FrontLeftWheel, FrontRightWheel);
+        AntiRoll(RearLeftWheel, RearRightWheel);
     }
 
     void OnGUI()
@@ -102,5 +110,27 @@ public class carScript : MonoBehaviour
 
         wheel.forwardFriction = forwardFriction;
         wheel.sidewaysFriction = sidewaysFriction;
+    }
+
+    void AntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
+    {
+        WheelHit hit;
+        float travelLeft = 1.0f;
+        float travelRight = 1.0f;
+
+        bool groundedLeft = leftWheel.GetGroundHit(out hit);
+        if (groundedLeft)
+            travelLeft = (-leftWheel.transform.InverseTransformPoint(hit.point).y - leftWheel.radius) / leftWheel.suspensionDistance;
+
+        bool groundedRight = rightWheel.GetGroundHit(out hit);
+        if (groundedRight)
+            travelRight = (-rightWheel.transform.InverseTransformPoint(hit.point).y - rightWheel.radius) / rightWheel.suspensionDistance;
+
+        float antiRollForce = (travelLeft - travelRight) * 10000f; // dostosuj si³ê
+
+        if (groundedLeft)
+            GetComponent<Rigidbody>().AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
+        if (groundedRight)
+            GetComponent<Rigidbody>().AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
     }
 }

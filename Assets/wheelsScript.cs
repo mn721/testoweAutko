@@ -9,9 +9,35 @@ public class Wheel : MonoBehaviour
     private float currentSteerAngle = 0f;
     private float wheelRotation = 0f;
 
+    void Start()
+    {
+        SetupWheel(wheelCollider);
+    }
+
     void Update()
     {
         UpdateWheelVisuals();
+    }
+
+    void SetupWheel(WheelCollider wheelCollider)
+    {
+        wheelCollider.mass = 40f;
+        wheelCollider.radius = 0.35f;
+        wheelCollider.suspensionDistance = 0.3f;
+
+        JointSpring spring = wheelCollider.suspensionSpring;
+        spring.spring = 70000f;
+        spring.damper = 9000f;
+        spring.targetPosition = 0.5f;
+        wheelCollider.suspensionSpring = spring;
+
+        WheelFrictionCurve forwardFriction = wheelCollider.forwardFriction;
+        forwardFriction.stiffness = 1.5f;
+        wheelCollider.forwardFriction = forwardFriction;
+
+        WheelFrictionCurve sidewaysFriction = wheelCollider.sidewaysFriction;
+        sidewaysFriction.stiffness = 2.5f;
+        wheelCollider.sidewaysFriction = sidewaysFriction;
     }
 
     void UpdateWheelVisuals()
