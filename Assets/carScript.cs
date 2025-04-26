@@ -52,9 +52,12 @@ public class carScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && currentGear < Gear.Sixth)
             currentGear++;
+        
 
         if (Input.GetKeyDown(KeyCode.Q) && currentGear > Gear.R)
             currentGear--;
+            
+        
     }
 
     void FixedUpdate()
@@ -62,7 +65,7 @@ public class carScript : MonoBehaviour
         float speedKmh = rigid.linearVelocity.magnitude * 3.6f;
         currentSpeed = speedKmh;
 
-        wheelRPM = (rigid.linearVelocity.magnitude / (2 * Mathf.PI * 0.34f)) * 60f; // promień koła ~0.34m
+        wheelRPM = (rigid.linearVelocity.magnitude / (2 * Mathf.PI * 0.34f)) * 60f; // promie� ko�a ~0.34m
 
         UpdateEngineRPM();
 
@@ -96,6 +99,11 @@ public class carScript : MonoBehaviour
             RearLeftWheel.brakeTorque = 0;
             RearRightWheel.brakeTorque = 0;
         }
+
+        //if (currentGear == -1 && isBraking)
+        //{
+        //    motor = -drivespeed;
+        //}
 
         RearLeftWheel.motorTorque = motor;
         RearRightWheel.motorTorque = motor;
