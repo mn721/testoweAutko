@@ -8,10 +8,27 @@ public class carScript : MonoBehaviour
     public float steerspeed = 20f;
     public float brakeForce = 60000f;
     public float handbrakeForce = 150000f;
-    public float reverseSpeedThreshold = 2f;
+    public float maxEngineRPM = 7000f;
+    public float minEngineRPM = 800f;
     public float currentSpeed = 0f;
-    public float[] gearSpeedLimits = { 0f, 25f, 50f, 100f, 145f, 190f };
-    public int currentGear = 0;
+
+    public enum Gear
+    {
+        R = -1,
+        N = 0,
+        First = 1,
+        Second,
+        Third,
+        Fourth,
+        Fifth,
+        Sixth
+    }
+
+    public Gear currentGear = Gear.N;
+    public float[] gearRatios = { -3.5f, 0f, 3.2f, 2.1f, 1.5f, 1.2f, 1.0f, 0.85f }; // R, N, 1,2,3,4,5,6
+
+    public float wheelRPM;
+    public float engineRPM;
 
     float horizontalInput, verticalInput;
     bool isHandBraking;
@@ -23,7 +40,7 @@ public class carScript : MonoBehaviour
         SetWheelFriction(FrontRightWheel);
         SetWheelFriction(RearLeftWheel);
         SetWheelFriction(RearRightWheel);
-        GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -0.2f, -0.1f);
+        rigid.centerOfMass = new Vector3(0, -0.2f, -0.1f);
     }
 
     void Update()
@@ -33,43 +50,61 @@ public class carScript : MonoBehaviour
         isHandBraking = Input.GetKey(KeyCode.Space);
         isBraking = Input.GetKey(KeyCode.S);
 
-        if (Input.GetKeyDown(KeyCode.E) && currentGear < gearSpeedLimits.Length - 1)
+        if (Input.GetKeyDown(KeyCode.E) && currentGear < Gear.Sixth)
             currentGear++;
 
-        if (Input.GetKeyDown(KeyCode.Q) && currentGear > 0)
+        if (Input.GetKeyDown(KeyCode.Q) && currentGear > Gear.R)
             currentGear--;
     }
 
     void FixedUpdate()
     {
         float speedKmh = rigid.linearVelocity.magnitude * 3.6f;
-        float motor = 0f;
-
-        if (currentGear > 0)
-        {
-            if (speedKmh < gearSpeedLimits[currentGear] || verticalInput < 0)
-                motor = verticalInput * drivespeed;
-        }
-
         currentSpeed = speedKmh;
 
-        if (isBraking && drivespeed < 100)
+        wheelRPM = (rigid.linearVelocity.magnitude / (2 * Mathf.PI * 0.34f)) * 60f; // promieÅ„ koÅ‚a ~0.34m
+
+        UpdateEngineRPM();
+
+        rigid.AddForce(Vector3.down * 7f, ForceMode.Acceleration);
+
+        float motor = 0f;
+
+        if (currentGear != Gear.N)
         {
-            motor = -drivespeed;
+            float gearRatio = gearRatios[(int)currentGear + 1];
+
+            bool canMove = CanMoveFromCurrentGear(speedKmh);
+
+            if (canMove && engineRPM < maxEngineRPM)
+            {
+                motor = verticalInput * drivespeed * Mathf.Sign(gearRatio);
+            }
+            else
+            {
+                motor = 0f;
+            }
+        }
+
+        if (verticalInput == 0f)
+        {
+            RearLeftWheel.brakeTorque = 1000f;
+            RearRightWheel.brakeTorque = 1000f;
+        }
+        else
+        {
+            RearLeftWheel.brakeTorque = 0;
+            RearRightWheel.brakeTorque = 0;
         }
 
         RearLeftWheel.motorTorque = motor;
         RearRightWheel.motorTorque = motor;
-        //frontLeft.motorTorque = motor;
-        //frontRight.motorTorque = motor;
 
         FrontLeftWheel.steerAngle = steerspeed * horizontalInput;
         FrontRightWheel.steerAngle = steerspeed * horizontalInput;
 
         FrontLeftWheel.brakeTorque = 0;
         FrontRightWheel.brakeTorque = 0;
-        RearLeftWheel.brakeTorque = 0;
-        RearRightWheel.brakeTorque = 0;
 
         if (isBraking)
         {
@@ -85,19 +120,47 @@ public class carScript : MonoBehaviour
         }
 
         Vector3 euler = transform.eulerAngles;
-        euler.z = 0f; // reset przechy³u
+        euler.z = 0f;
         transform.eulerAngles = euler;
 
         AntiRoll(FrontLeftWheel, FrontRightWheel);
         AntiRoll(RearLeftWheel, RearRightWheel);
     }
 
+    void UpdateEngineRPM()
+    {
+        if (currentGear == Gear.N)
+        {
+            engineRPM = Mathf.Lerp(engineRPM, minEngineRPM, Time.deltaTime * 2f);
+        }
+        else
+        {
+            float gearRatio = gearRatios[(int)currentGear + 1];
+            engineRPM = Mathf.Abs(wheelRPM * gearRatio);
+            engineRPM = Mathf.Clamp(engineRPM, minEngineRPM, maxEngineRPM + 500f);
+        }
+    }
+
+    bool CanMoveFromCurrentGear(float speedKmh)
+    {
+        if (currentGear == Gear.R)
+            return true;
+
+        if (currentGear == Gear.First)
+            return true;
+
+        if (speedKmh < 10f)
+            return false;
+
+        return true;
+    }
+
     void OnGUI()
     {
         float speed = rigid.linearVelocity.magnitude * 3.6f;
-        GUI.Label(new Rect(10, 10, 200, 20), "Predkosc: " + speed.ToString("F1") + " km/h");
-
-        GUI.Label(new Rect(10, 20, 200, 20), "Bieg: " + (currentGear).ToString());
+        GUI.Label(new Rect(250, 50, 200, 20), "Predkosc: " + speed.ToString("F1") + " km/h");
+        GUI.Label(new Rect(250, 90, 200, 20), "Bieg: " + currentGear.ToString());
+        GUI.Label(new Rect(250, 130, 200, 20), "RPM: " + engineRPM.ToString("F0"));
     }
 
     void SetWheelFriction(WheelCollider wheel)
@@ -126,11 +189,11 @@ public class carScript : MonoBehaviour
         if (groundedRight)
             travelRight = (-rightWheel.transform.InverseTransformPoint(hit.point).y - rightWheel.radius) / rightWheel.suspensionDistance;
 
-        float antiRollForce = (travelLeft - travelRight) * 10000f; // dostosuj si³ê
+        float antiRollForce = (travelLeft - travelRight) * 10000f;
 
         if (groundedLeft)
-            GetComponent<Rigidbody>().AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
+            rigid.AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
         if (groundedRight)
-            GetComponent<Rigidbody>().AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
+            rigid.AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
     }
 }
