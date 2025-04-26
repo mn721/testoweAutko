@@ -10,9 +10,9 @@ public class CameraSwitcher : MonoBehaviour
     {
         SetCameraPosition(3);
 
-        if (Input.GetKey(KeyCode.J)) SetCameraPosition(0);
+        if (Input.GetKey(KeyCode.L)) SetCameraPosition(0);
         if (Input.GetKey(KeyCode.K)) SetCameraPosition(1);
-        if (Input.GetKey(KeyCode.L)) SetCameraPosition(2);
+        if (Input.GetKey(KeyCode.J)) SetCameraPosition(2);
     }
 
     void SetCameraPosition(int index)

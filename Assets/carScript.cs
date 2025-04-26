@@ -10,8 +10,8 @@ public class carScript : MonoBehaviour
     public float handbrakeForce = 150000f;
     public float reverseSpeedThreshold = 2f;
     public float currentSpeed = 0f;
-    public float[] gearSpeedLimits = { 0f, 25f, 50f, 100f, 145f, 190f };
-    public int currentGear = 0;
+    public float[] gearSpeedLimits = { 25f, 0f, 25f, 50f, 100f, 145f, 190f };
+    public int currentGear = 1;
 
     float horizontalInput, verticalInput;
     bool isHandBraking;
@@ -24,6 +24,8 @@ public class carScript : MonoBehaviour
         SetWheelFriction(RearLeftWheel);
         SetWheelFriction(RearRightWheel);
         GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -0.2f, -0.1f);
+
+        rigid = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -34,10 +36,20 @@ public class carScript : MonoBehaviour
         isBraking = Input.GetKey(KeyCode.S);
 
         if (Input.GetKeyDown(KeyCode.E) && currentGear < gearSpeedLimits.Length - 1)
-            currentGear++;
+        {
+            if (currentGear == -1)
+                drivespeed = Mathf.Abs(drivespeed);
 
-        if (Input.GetKeyDown(KeyCode.Q) && currentGear > 0)
+            currentGear++;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q) && currentGear >= 0)
+        {
             currentGear--;
+
+            if (currentGear == -1)
+                drivespeed *= -1;
+        }
     }
 
     void FixedUpdate()
@@ -45,7 +57,9 @@ public class carScript : MonoBehaviour
         float speedKmh = rigid.linearVelocity.magnitude * 3.6f;
         float motor = 0f;
 
-        if (currentGear > 0)
+        rigid.AddForce(Vector3.down * 10f, ForceMode.Acceleration);
+
+        if (currentGear > -2)
         {
             if (speedKmh < gearSpeedLimits[currentGear] || verticalInput < 0)
                 motor = verticalInput * drivespeed;
@@ -57,6 +71,11 @@ public class carScript : MonoBehaviour
         {
             motor = -drivespeed;
         }
+
+        //if (currentGear == -1 && isBraking)
+        //{
+        //    motor = -drivespeed;
+        //}
 
         RearLeftWheel.motorTorque = motor;
         RearRightWheel.motorTorque = motor;
