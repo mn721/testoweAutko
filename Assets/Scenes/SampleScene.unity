@@ -246,7 +246,7 @@ Transform:
   m_GameObject: {fileID: 72080163}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071069, z: -0, w: 0.70710677}
-  m_LocalPosition: {x: 4.9999943, y: 0, z: 11.999996}
+  m_LocalPosition: {x: 5, y: 0.5, z: 11.999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -970,16 +970,21 @@ MonoBehaviour:
   steerspeed: 25
   brakeForce: 3000
   handbrakeForce: 20000
-  reverseSpeedThreshold: 5
+  maxEngineRPM: 7000
+  minEngineRPM: 800
   currentSpeed: 0
-  gearSpeedLimits:
-  - 0
-  - 25
-  - 50
-  - 100
-  - 145
-  - 190
   currentGear: 0
+  gearRatios:
+  - -3.5
+  - 0
+  - 3.2
+  - 2.1
+  - 1.5
+  - 1.2
+  - 1
+  - 0.85
+  wheelRPM: 0
+  engineRPM: 0
 --- !u!54 &555642678
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1460,7 +1465,7 @@ Transform:
   m_GameObject: {fileID: 842764639}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071062, z: -0, w: 0.7071075}
-  m_LocalPosition: {x: -7.000023, y: -0.5, z: 12.000006}
+  m_LocalPosition: {x: -7, y: 0.5, z: 12.000006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1579,7 +1584,7 @@ Transform:
   m_GameObject: {fileID: 1322721552}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13052596, y: -0, z: -0, w: 0.99144495}
-  m_LocalPosition: {x: -1, y: 1.048372, z: 4.611411}
+  m_LocalPosition: {x: -0.8, y: 1.4966607, z: 6.602929}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1611,16 +1616,21 @@ MonoBehaviour:
   steerspeed: 20
   brakeForce: 60000
   handbrakeForce: 150000
-  reverseSpeedThreshold: 2
+  maxEngineRPM: 7000
+  minEngineRPM: 800
   currentSpeed: 0
-  gearSpeedLimits:
-  - 0
-  - 25
-  - 50
-  - 100
-  - 145
-  - 190
   currentGear: 0
+  gearRatios:
+  - -3.5
+  - 0
+  - 3.2
+  - 2.1
+  - 1.5
+  - 1.2
+  - 1
+  - 0.85
+  wheelRPM: 0
+  engineRPM: 0
 --- !u!54 &1416094612 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 7495443279060062592, guid: 133308cdb8794744caaef026bde9e1f0, type: 3}
@@ -2020,7 +2030,7 @@ Transform:
   m_GameObject: {fileID: 1852491927}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00000007525345, y: 0.99144495, z: -0.13052598, w: 0.00000058859587}
-  m_LocalPosition: {x: -1.0000026, y: 1.334454, z: 17.838318}
+  m_LocalPosition: {x: -0.8, y: 1.334454, z: 17.838318}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
