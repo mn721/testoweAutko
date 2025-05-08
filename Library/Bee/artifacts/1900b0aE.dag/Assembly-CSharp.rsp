@@ -406,6 +406,8 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Rider.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Searcher.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.ShaderGraph.Editor.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Splines.Editor.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Splines.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.TerrainTools.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.TerrainTools.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.TextMeshPro.Editor.ref.dll"
@@ -430,6 +432,7 @@
 "Assets/CameraMove.cs"
 "Assets/carScript.cs"
 "Assets/Gearbox.cs"
+"Assets/TrackGenerator.cs"
 "Assets/TutorialInfo/Scripts/Readme.cs"
 "Assets/wheelsScript.cs"
 -langversion:9.0
