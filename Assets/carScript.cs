@@ -56,8 +56,6 @@ public class carScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q) && currentGear > Gear.R)
             currentGear--;
-            
-        
     }
 
     void FixedUpdate()
@@ -158,13 +156,13 @@ public class carScript : MonoBehaviour
         return true;
     }
 
-    void OnGUI()
+    /*void OnGUI()
     {
         float speed = rigid.linearVelocity.magnitude * 3.6f;
         GUI.Label(new Rect(250, 50, 200, 20), "Predkosc: " + speed.ToString("F1") + " km/h");
         GUI.Label(new Rect(250, 90, 200, 20), "Bieg: " + currentGear.ToString());
         GUI.Label(new Rect(250, 130, 200, 20), "RPM: " + engineRPM.ToString("F0"));
-    }
+    }*/
 
     void SetWheelFriction(WheelCollider wheel)
     {
