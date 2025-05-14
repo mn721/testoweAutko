@@ -1,36 +1,54 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
+using System.Collections;
 
 public class carScript : MonoBehaviour
 {
+    //Podzespoły
     public Rigidbody rigid;
     public WheelCollider FrontLeftWheel, FrontRightWheel, RearLeftWheel, RearRightWheel;
-    public float drivespeed = 24000f;
-    public float steerspeed = 20f;
+
+    //Sterowanie
+    public float drivespeed = 30000f;
+    public float steerspeed = 50f;
     public float brakeForce = 60000f;
     public float handbrakeForce = 150000f;
-    public float maxEngineRPM = 7000f;
-    public float minEngineRPM = 800f;
-    public float currentSpeed = 0f;
 
+    //Silnik i sprzęgło
+    public float maxEngineRPM = 7000f;
+    public float minEngineRPM = 1000f;
+    private float engineRPM, targetEngineRPM, wheelRPM;
+    private float clutchValue = 1f;
+    private float clutchEngageSpeed = 2.5f;
+    private float clutchDisengageTime = 0.25f;
+    private float clutchTimer = 0f;
+    private bool isClutchEngaged = true;
+    private bool isRevLimiting = false;
+    private float revLimiterCooldown = 0.2f;
+    private float revLimiterTimer = 0f;
+
+    //Biegi
     public enum Gear { R = -1, N = 0, First = 1, Second, Third, Fourth, Fifth, Sixth }
     public Gear currentGear = Gear.N;
-    public float[] gearRatios = { -3.5f, 0f, 3.2f, 2.1f, 1.5f, 1.2f, 1.0f, 0.85f }; // R, N, 1,2,3,4,5,6
+    public float[] gearRatios = { -3.2f, 0f, 4.0f, 2.6f, 1.8f, 1.3f, 1.0f, 0.8f };
+    private float lastGearChangeTime = 0f;
 
+    //Napęd
     public enum DriveType { RWD, FWD, AWD }
     public DriveType currentDrive = DriveType.RWD;
 
+    //Drift
     public Slider driftSlider;
     public TMP_Text driftPointsText;
     private float driftPoints = 0f;
 
-    public float wheelRPM;
-    public float engineRPM;
-
-    float horizontalInput, verticalInput;
-    bool isHandBraking;
-    bool isBraking;
+    //Inne
+    public float currentSpeed = 0f;
+    private float horizontalInput, verticalInput;
+    private bool isHandBraking;
+    private bool isBraking;
 
     void Start()
     {
@@ -38,7 +56,8 @@ public class carScript : MonoBehaviour
         SetWheelFriction(FrontRightWheel);
         SetWheelFriction(RearLeftWheel);
         SetWheelFriction(RearRightWheel);
-        rigid.centerOfMass = new Vector3(0, -0.2f, 0.0f);
+
+        rigid.centerOfMass = new Vector3(0, -0.5f, -0.3f);
 
         SetupSuspension(FrontLeftWheel, true);
         SetupSuspension(FrontRightWheel, true);
@@ -53,40 +72,61 @@ public class carScript : MonoBehaviour
         isHandBraking = Input.GetKey(KeyCode.Space);
         isBraking = Input.GetKey(KeyCode.S);
 
-        if (Input.GetKeyDown(KeyCode.E) && currentGear < Gear.Sixth) currentGear++;
-        if (Input.GetKeyDown(KeyCode.Q) && currentGear > Gear.R) currentGear--;
-
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.E) && currentGear < Gear.Sixth)
         {
-            currentDrive = (DriveType)(((int)currentDrive + 1) % 3);
+            currentGear++;
+            lastGearChangeTime = Time.time;
+            isClutchEngaged = false;
+            clutchTimer = clutchDisengageTime;
         }
 
-        if (driftSlider)
+        if (Input.GetKeyDown(KeyCode.Q) && currentGear > Gear.R)
         {
-            float driftValue = driftSlider.value;
-            AdjustDriftFriction(driftValue);
+            currentGear--;
+            lastGearChangeTime = Time.time;
+            isClutchEngaged = false;
+            clutchTimer = clutchDisengageTime;
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+            currentDrive = (DriveType)(((int)currentDrive + 1) % 3);
+
+        if (driftSlider)
+            AdjustDriftFriction(driftSlider.value);
+
+        if (!isClutchEngaged)
+        {
+            clutchTimer -= Time.deltaTime;
+            if (clutchTimer <= 0f)
+                isClutchEngaged = true;
         }
     }
 
     void FixedUpdate()
     {
-        float speedKmh = rigid.linearVelocity.magnitude * 3.6f;
-        currentSpeed = speedKmh;
-
+        currentSpeed = rigid.linearVelocity.magnitude * 3.6f;
         wheelRPM = (rigid.linearVelocity.magnitude / (2 * Mathf.PI * 0.34f)) * 60f;
-        UpdateEngineRPM();
 
-        rigid.AddForce(Vector3.down * 7f, ForceMode.Acceleration);
+        UpdateEngineRPM();
+        rigid.AddForce(Vector3.down * 10.0f, ForceMode.Acceleration);
 
         float motor = 0f;
+
         if (currentGear != Gear.N)
         {
             float gearRatio = gearRatios[(int)currentGear + 1];
-            bool canMove = CanMoveFromCurrentGear(speedKmh);
-            if (canMove && engineRPM < maxEngineRPM)
+            bool canMove = CanMoveFromCurrentGear(currentSpeed);
+
+            if (canMove && engineRPM < maxEngineRPM && Mathf.Abs(verticalInput) > 0.1f)
             {
-                float tractionControl = Mathf.Clamp01(1 - (currentSpeed / 150f)); // mniej mocy przy wi�kszej pr�dko�ci
-                motor = verticalInput * drivespeed * Mathf.Sign(gearRatio) * tractionControl;
+                float rpmFactor = engineRPM < 0.85f * maxEngineRPM ? 1f :
+                    Mathf.Clamp01(1f - (engineRPM - 0.85f * maxEngineRPM) / (0.15f * maxEngineRPM));
+
+                int gearIndex = Mathf.Max(1, Mathf.Abs((int)currentGear)); // uniknij dzielenia przez 0
+                float speedRatio = Mathf.Clamp01(currentSpeed / (30f * gearIndex));
+                float gearRatioSpeedFactor = Mathf.Lerp(1f, 0.4f, 1f - speedRatio); // mniej agresywne
+
+                motor = verticalInput * drivespeed * Mathf.Sign(gearRatio) * clutchValue * rpmFactor * gearRatioSpeedFactor;
             }
         }
 
@@ -97,9 +137,7 @@ public class carScript : MonoBehaviour
 
         ApplyBrakes();
 
-        Vector3 euler = transform.eulerAngles;
-        euler.z = 0f;
-        transform.eulerAngles = euler;
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0f);
 
         AntiRoll(FrontLeftWheel, FrontRightWheel);
         AntiRoll(RearLeftWheel, RearRightWheel);
@@ -111,6 +149,48 @@ public class carScript : MonoBehaviour
         SetupSuspension(RearLeftWheel, false);
         SetupSuspension(RearRightWheel, false);
 
+        float downforce = currentSpeed * 30f; // skaluje się z prędkością
+        rigid.AddForce(-transform.up * downforce);
+    }
+
+    void UpdateEngineRPM()
+    {
+        if (currentGear == Gear.N)
+        {
+            if (Mathf.Abs(verticalInput) > 0.05f)
+                targetEngineRPM = Mathf.Lerp(targetEngineRPM, minEngineRPM + verticalInput * (maxEngineRPM - minEngineRPM), Time.deltaTime * 5f);
+            else
+                targetEngineRPM = Mathf.Lerp(targetEngineRPM, minEngineRPM, Time.deltaTime * 2f);
+        }
+        else
+        {
+            float gearRatio = gearRatios[(int)currentGear + 1];
+            float wheelBasedRPM = Mathf.Abs(wheelRPM * gearRatio);
+            targetEngineRPM = Mathf.Lerp(wheelBasedRPM, maxEngineRPM, Mathf.Clamp01(verticalInput));
+        }
+
+        if (engineRPM >= maxEngineRPM && verticalInput > 0.1f)
+        {
+            isRevLimiting = true;
+            revLimiterTimer = revLimiterCooldown;
+        }
+
+        if (isRevLimiting)
+        {
+            revLimiterTimer -= Time.deltaTime;
+            if (revLimiterTimer <= 0f)
+                isRevLimiting = false;
+        }
+
+        float limiterEffect = isRevLimiting ? 0f : 1f;
+
+        clutchValue = Mathf.MoveTowards(clutchValue, isClutchEngaged ? 1f : 0f, Time.deltaTime * clutchEngageSpeed);
+        engineRPM = Mathf.Lerp(engineRPM, targetEngineRPM * clutchValue * limiterEffect, Time.deltaTime / 0.3f);
+
+        engineRPM = Mathf.Clamp(engineRPM, minEngineRPM, maxEngineRPM + 1000f);
+
+        if (currentGear == Gear.N && Mathf.Abs(verticalInput) < 0.05f)
+            targetEngineRPM = minEngineRPM + Mathf.Sin(Time.time * 5f) * 50f;
     }
 
     void ApplyDriveTorque(float motor)
@@ -130,15 +210,15 @@ public class carScript : MonoBehaviour
 
     void ApplyBrakes()
     {
-        if (verticalInput == 0f)
+        if (Mathf.Abs(verticalInput) < 0.1f)
         {
-            RearLeftWheel.brakeTorque = 1000f;
-            RearRightWheel.brakeTorque = 1000f;
+            RearLeftWheel.brakeTorque = 200f; // delikatne hamowanie
+            RearRightWheel.brakeTorque = 200f;
         }
         else
         {
-            RearLeftWheel.brakeTorque = 0;
-            RearRightWheel.brakeTorque = 0;
+            RearLeftWheel.brakeTorque = 0f;
+            RearRightWheel.brakeTorque = 0f;
         }
 
         if (isBraking)
@@ -150,35 +230,116 @@ public class carScript : MonoBehaviour
         }
         else if (isHandBraking)
         {
-            RearLeftWheel.brakeTorque = handbrakeForce;
-            RearRightWheel.brakeTorque = handbrakeForce;
+            SetWheelDriftMode(RearLeftWheel, true);
+            SetWheelDriftMode(RearRightWheel, true);
         }
         else
         {
-            FrontLeftWheel.brakeTorque = 0;
-            FrontRightWheel.brakeTorque = 0;
+            SetWheelDriftMode(RearLeftWheel, false);
+            SetWheelDriftMode(RearRightWheel, false);
         }
     }
 
-    void UpdateEngineRPM()
+    void SetWheelDriftMode(WheelCollider wheel, bool drifting)
     {
-        if (currentGear == Gear.N)
+        WheelFrictionCurve sideways = wheel.sidewaysFriction;
+        sideways.stiffness = drifting ? 0.3f : 1.0f;
+        wheel.sidewaysFriction = sideways;
+    }
+
+    void SetWheelFriction(WheelCollider wheel)
+    {
+        WheelFrictionCurve forward = wheel.forwardFriction;
+        WheelFrictionCurve sideways = wheel.sidewaysFriction;
+
+        forward.stiffness = 1.5f;
+        sideways.stiffness = 2.0f;
+
+        wheel.forwardFriction = forward;
+        wheel.sidewaysFriction = sideways;
+    }
+
+    void AdjustDriftFriction(float driftFactor)
+    {
+        AdjustWheelFriction(FrontLeftWheel, driftFactor);
+        AdjustWheelFriction(FrontRightWheel, driftFactor);
+        AdjustWheelFriction(RearLeftWheel, driftFactor);
+        AdjustWheelFriction(RearRightWheel, driftFactor);
+    }
+
+    void AdjustWheelFriction(WheelCollider wheel, float driftFactor)
+    {
+        WheelFrictionCurve sideways = wheel.sidewaysFriction;
+        bool isRear = (wheel == RearLeftWheel || wheel == RearRightWheel);
+        float min = isRear ? 0.8f : 1.2f;
+        float max = isRear ? 2.0f : 3.0f;
+
+        sideways.stiffness = Mathf.Lerp(min, max, driftFactor);
+        wheel.sidewaysFriction = sideways;
+    }
+
+    void SetupSuspension(WheelCollider wheel, bool isFront)
+    {
+        JointSpring spring = wheel.suspensionSpring;
+        spring.spring = isFront ? 80000f : 40000f;
+        spring.damper = isFront ? 10000f : 6000f;
+        spring.targetPosition = 0.5f;
+
+        wheel.suspensionSpring = spring;
+        wheel.suspensionDistance = 0.3f;
+
+        float driftAmount = driftSlider != null ? driftSlider.value : 1.5f;
+        float speedFactor = Mathf.Clamp01(currentSpeed / 120f);
+        float baseStiffness = isFront ? 2.0f : 1.2f;
+        float adjustedStiffness = Mathf.Lerp(baseStiffness, driftAmount, 1f - speedFactor);
+
+        WheelFrictionCurve forward = wheel.forwardFriction;
+        WheelFrictionCurve sideways = wheel.sidewaysFriction;
+
+        forward.stiffness = isFront ? 1.5f : adjustedStiffness * 0.9f;
+        sideways.stiffness = adjustedStiffness;
+
+        wheel.forwardFriction = forward;
+        wheel.sidewaysFriction = sideways;
+    }
+
+    void AntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
+    {
+        WheelHit hit;
+        float travelLeft = 1f;
+        float travelRight = 1f;
+
+        bool groundedLeft = leftWheel.GetGroundHit(out hit);
+        if (groundedLeft)
+            travelLeft = (-leftWheel.transform.InverseTransformPoint(hit.point).y - leftWheel.radius) / leftWheel.suspensionDistance;
+
+        bool groundedRight = rightWheel.GetGroundHit(out hit);
+        if (groundedRight)
+            travelRight = (-rightWheel.transform.InverseTransformPoint(hit.point).y - rightWheel.radius) / rightWheel.suspensionDistance;
+
+        float antiRollForce = (travelLeft - travelRight) * 8000f;
+
+        if (groundedLeft)
+            rigid.AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
+
+        if (groundedRight)
+            rigid.AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
+    }
+
+    void CalculateDriftPoints()
+    {
+        float angle = Vector3.Angle(transform.forward, rigid.linearVelocity);
+        if (angle > 10f && rigid.linearVelocity.magnitude > 5f)
         {
-            engineRPM = Mathf.Lerp(engineRPM, minEngineRPM, Time.deltaTime * 2f);
-        }
-        else
-        {
-            float gearRatio = gearRatios[(int)currentGear + 1];
-            engineRPM = Mathf.Abs(wheelRPM * gearRatio);
-            engineRPM = Mathf.Clamp(engineRPM, minEngineRPM, maxEngineRPM + 500f);
+            driftPoints += angle * Time.deltaTime;
+            if (driftPointsText) driftPointsText.text = "Drift Points: " + ((int)driftPoints).ToString();
         }
     }
 
     bool CanMoveFromCurrentGear(float speedKmh)
     {
         if (currentGear == Gear.R || currentGear == Gear.First) return true;
-        if (speedKmh < 10f) return false;
-        return true;
+        return speedKmh >= 10f;
     }
 
     void OnGUI()
@@ -192,89 +353,8 @@ public class carScript : MonoBehaviour
         GUI.Label(new Rect(20, 20, 300, 30), "Predkosc: " + speed.ToString("F1") + " km/h", style);
         GUI.Label(new Rect(20, 50, 300, 30), "Bieg: " + currentGear.ToString(), style);
         GUI.Label(new Rect(20, 80, 300, 30), "RPM: " + engineRPM.ToString("F0"), style);
-    }
+        GUI.Label(new Rect(20, 110, 300, 30), "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1"), style);
 
-    void SetWheelFriction(WheelCollider wheel)
-    {
-        WheelFrictionCurve forwardFriction = wheel.forwardFriction;
-        WheelFrictionCurve sidewaysFriction = wheel.sidewaysFriction;
-
-        forwardFriction.stiffness = 1.5f;
-        sidewaysFriction.stiffness = 2.0f;
-
-        wheel.forwardFriction = forwardFriction;
-        wheel.sidewaysFriction = sidewaysFriction;
-    }
-
-    void AdjustDriftFriction(float driftFactor)
-    {
-        AdjustWheelFriction(FrontLeftWheel, driftFactor);
-        AdjustWheelFriction(FrontRightWheel, driftFactor);
-        AdjustWheelFriction(RearLeftWheel, driftFactor);
-        AdjustWheelFriction(RearRightWheel, driftFactor);
-    }
-
-    void AdjustWheelFriction(WheelCollider wheel, float driftFactor)
-    {
-        WheelFrictionCurve sidewaysFriction = wheel.sidewaysFriction;
-        sidewaysFriction.stiffness = Mathf.Lerp(0.5f, 3.0f, driftFactor);
-        wheel.sidewaysFriction = sidewaysFriction;
-    }
-
-    void CalculateDriftPoints()
-    {
-        float angle = Vector3.Angle(transform.forward, rigid.linearVelocity);
-        if (angle > 10f && rigid.linearVelocity.magnitude > 5f)
-        {
-            driftPoints += angle * Time.deltaTime;
-            if (driftPointsText) driftPointsText.text = "Drift Points: " + ((int)driftPoints).ToString();
-        }
-    }
-
-    void AntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
-    {
-        WheelHit hit;
-        float travelLeft = 1.0f;
-        float travelRight = 1.0f;
-
-        bool groundedLeft = leftWheel.GetGroundHit(out hit);
-        if (groundedLeft)
-            travelLeft = (-leftWheel.transform.InverseTransformPoint(hit.point).y - leftWheel.radius) / leftWheel.suspensionDistance;
-
-        bool groundedRight = rightWheel.GetGroundHit(out hit);
-        if (groundedRight)
-            travelRight = (-rightWheel.transform.InverseTransformPoint(hit.point).y - rightWheel.radius) / rightWheel.suspensionDistance;
-
-        float antiRollForce = (travelLeft - travelRight) * 5000f;
-
-        if (groundedLeft)
-            rigid.AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
-        if (groundedRight)
-            rigid.AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
-    }
-
-    void SetupSuspension(WheelCollider wheel, bool isFront)
-    {
-        JointSpring spring = wheel.suspensionSpring;
-        spring.spring = isFront ? 80000f : 60000f;
-        spring.damper = isFront ? 10000f : 8000f;
-        spring.targetPosition = 0.5f;
-        wheel.suspensionSpring = spring;
-
-        wheel.suspensionDistance = 0.3f;
-
-        // Dynamiczne ustawienie przyczepno�ci
-        float driftAmount = driftSlider != null ? driftSlider.value : 1.5f;
-        float speedFactor = Mathf.Clamp01(currentSpeed / 120f); // wi�ksza pr�dko�� = wi�cej przyczepno�ci
-        float baseStiffness = isFront ? 2.0f : 1.2f;
-        float adjustedStiffness = Mathf.Lerp(baseStiffness, driftAmount, 1f - speedFactor);
-
-        WheelFrictionCurve forwardFriction = wheel.forwardFriction;
-        forwardFriction.stiffness = isFront ? 1.5f : adjustedStiffness * 0.9f;
-        wheel.forwardFriction = forwardFriction;
-
-        WheelFrictionCurve sidewaysFriction = wheel.sidewaysFriction;
-        sidewaysFriction.stiffness = adjustedStiffness;
-        wheel.sidewaysFriction = sidewaysFriction;
+        Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}");
     }
 }
