@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class carScript : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class carScript : MonoBehaviour
     public float maxEngineRPM = 7000f;
     public float minEngineRPM = 800f;
     public float currentSpeed = 0f;
+
+    public Text VELOCITY;
+    public Text GEAR;
+    public Text RPM;
 
     public enum Gear
     {
@@ -56,6 +61,8 @@ public class carScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q) && currentGear > Gear.R)
             currentGear--;
+
+        OnGUI();
     }
 
     void FixedUpdate()
@@ -156,13 +163,18 @@ public class carScript : MonoBehaviour
         return true;
     }
 
-    /*void OnGUI()
+    void OnGUI()
     {
-        float speed = rigid.linearVelocity.magnitude * 3.6f;
-        GUI.Label(new Rect(250, 50, 200, 20), "Predkosc: " + speed.ToString("F1") + " km/h");
+        /*float Speed = rigid.linearVelocity.magnitude * 3.6f;
+        GUI.Label(new Rect(250, 50, 200, 20), "Predkosc: " + Speed.ToString("F1") + " km/h");
         GUI.Label(new Rect(250, 90, 200, 20), "Bieg: " + currentGear.ToString());
-        GUI.Label(new Rect(250, 130, 200, 20), "RPM: " + engineRPM.ToString("F0"));
-    }*/
+        GUI.Label(new Rect(250, 130, 200, 20), "RPM: " + engineRPM.ToString("F0"));*/
+
+        float speed = rigid.linearVelocity.magnitude * 3.6f;
+        VELOCITY.text = "Predkosc: " + speed.ToString("F1") + " km/h";
+        GEAR.text = "Bieg: " + currentGear.ToString();
+        RPM.text = "RPM: " + engineRPM.ToString("F0");
+    }
 
     void SetWheelFriction(WheelCollider wheel)
     {

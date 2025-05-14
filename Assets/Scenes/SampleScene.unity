@@ -1127,6 +1127,9 @@ MonoBehaviour:
   maxEngineRPM: 7000
   minEngineRPM: 800
   currentSpeed: 0
+  VELOCITY: {fileID: 0}
+  GEAR: {fileID: 0}
+  RPM: {fileID: 0}
   currentGear: 0
   gearRatios:
   - -3.5
@@ -1463,6 +1466,7 @@ GameObject:
   m_Component:
   - component: {fileID: 613955766}
   - component: {fileID: 613955765}
+  - component: {fileID: 613955767}
   m_Layer: 0
   m_Name: GUImanager
   m_TagString: Untagged
@@ -1479,13 +1483,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 613955764}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63916c5fc068b684da8e106833b0f213, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b4bf6fec4cbae34c8d456a54b5ae74c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 555642677}
-  Velocity: {fileID: 1682469243}
-  Gear: {fileID: 1754405695}
+  rigid: {fileID: 1416094612}
+  FrontLeftWheel: {fileID: 599489684}
+  FrontRightWheel: {fileID: 657828497}
+  RearLeftWheel: {fileID: 356738363}
+  RearRightWheel: {fileID: 366721981}
+  drivespeed: 24000
+  steerspeed: 20
+  brakeForce: 60000
+  handbrakeForce: 150000
+  maxEngineRPM: 7000
+  minEngineRPM: 800
+  currentSpeed: 0
+  VELOCITY: {fileID: 1682469243}
+  GEAR: {fileID: 1754405695}
   RPM: {fileID: 1837231568}
+  currentGear: 0
+  gearRatios:
+  - -3.5
+  - 0
+  - 3.2
+  - 2.1
+  - 1.5
+  - 1.2
+  - 1
+  - 0.85
+  wheelRPM: 0
+  engineRPM: 0
 --- !u!4 &613955766
 Transform:
   m_ObjectHideFlags: 0
@@ -1501,6 +1528,45 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &613955767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613955764}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b4bf6fec4cbae34c8d456a54b5ae74c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rigid: {fileID: 555642678}
+  FrontLeftWheel: {fileID: 599489684}
+  FrontRightWheel: {fileID: 657828497}
+  RearLeftWheel: {fileID: 356738363}
+  RearRightWheel: {fileID: 366721981}
+  drivespeed: 24000
+  steerspeed: 20
+  brakeForce: 60000
+  handbrakeForce: 150000
+  maxEngineRPM: 7000
+  minEngineRPM: 800
+  currentSpeed: 0
+  VELOCITY: {fileID: 1682469243}
+  GEAR: {fileID: 1754405695}
+  RPM: {fileID: 1837231568}
+  currentGear: 0
+  gearRatios:
+  - -3.5
+  - 0
+  - 3.2
+  - 2.1
+  - 1.5
+  - 1.2
+  - 1
+  - 0.85
+  wheelRPM: 0
+  engineRPM: 0
 --- !u!146 &657828497 stripped
 WheelCollider:
   m_CorrespondingSourceObject: {fileID: 4795950753765878369, guid: 133308cdb8794744caaef026bde9e1f0, type: 3}
@@ -1979,6 +2045,9 @@ MonoBehaviour:
   maxEngineRPM: 7000
   minEngineRPM: 800
   currentSpeed: 0
+  VELOCITY: {fileID: 0}
+  GEAR: {fileID: 0}
+  RPM: {fileID: 0}
   currentGear: 0
   gearRatios:
   - -3.5
