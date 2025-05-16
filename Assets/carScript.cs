@@ -11,7 +11,7 @@ public class carScript : MonoBehaviour
     public WheelCollider FrontLeftWheel, FrontRightWheel, RearLeftWheel, RearRightWheel;
 
     //Sterowanie
-    public float drivespeed = 30000f;
+    public float drivespeed = 50000f;
     public float steerspeed = 50f;
     public float brakeForce = 60000f;
     public float handbrakeForce = 150000f;
@@ -40,7 +40,6 @@ public class carScript : MonoBehaviour
     public DriveType currentDrive = DriveType.RWD;
 
     //Drift
-    public Slider driftSlider;
     public TMP_Text driftPointsText;
     private float driftPoints = 0f;
 
@@ -91,9 +90,6 @@ public class carScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
             currentDrive = (DriveType)(((int)currentDrive + 1) % 3);
 
-        if (driftSlider)
-            AdjustDriftFriction(driftSlider.value);
-
         if (!isClutchEngaged)
         {
             clutchTimer -= Time.deltaTime;
@@ -122,20 +118,31 @@ public class carScript : MonoBehaviour
                 float rpmFactor = engineRPM < 0.85f * maxEngineRPM ? 1f :
                     Mathf.Clamp01(1f - (engineRPM - 0.85f * maxEngineRPM) / (0.15f * maxEngineRPM));
 
-                int gearIndex = Mathf.Max(1, Mathf.Abs((int)currentGear)); // uniknij dzielenia przez 0
+                int gearIndex = Mathf.Max(1, Mathf.Abs((int)currentGear));
                 float speedRatio = Mathf.Clamp01(currentSpeed / (30f * gearIndex));
-                float gearRatioSpeedFactor = Mathf.Lerp(1f, 0.4f, 1f - speedRatio); // mniej agresywne
+                float gearRatioSpeedFactor = Mathf.Lerp(1f, 0.4f, 1f - speedRatio);
 
-                motor = verticalInput * drivespeed * Mathf.Sign(gearRatio) * clutchValue * rpmFactor * gearRatioSpeedFactor;
+                float torqueFactor = GetTorqueFactorFromRPM();
+                motor = verticalInput * drivespeed * Mathf.Sign(gearRatio) * clutchValue * rpmFactor * gearRatioSpeedFactor * torqueFactor;
             }
         }
 
         ApplyDriveTorque(motor);
+        AdjustRearTractionForPowerDrift();
 
         FrontLeftWheel.steerAngle = steerspeed * horizontalInput;
         FrontRightWheel.steerAngle = steerspeed * horizontalInput;
 
         ApplyBrakes();
+
+        if (verticalInput > 0.6f && currentSpeed > 30f)
+        {
+            float torqueAmount = horizontalInput * 1000f;
+            rigid.AddTorque(transform.up * torqueAmount);
+        }
+
+        FrontLeftWheel.steerAngle = steerspeed * horizontalInput;
+        FrontRightWheel.steerAngle = steerspeed * horizontalInput;
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0f);
 
@@ -149,7 +156,7 @@ public class carScript : MonoBehaviour
         SetupSuspension(RearLeftWheel, false);
         SetupSuspension(RearRightWheel, false);
 
-        float downforce = currentSpeed * 30f; // skaluje się z prędkością
+        float downforce = currentSpeed * 30f;
         rigid.AddForce(-transform.up * downforce);
     }
 
@@ -185,12 +192,19 @@ public class carScript : MonoBehaviour
         float limiterEffect = isRevLimiting ? 0f : 1f;
 
         clutchValue = Mathf.MoveTowards(clutchValue, isClutchEngaged ? 1f : 0f, Time.deltaTime * clutchEngageSpeed);
-        engineRPM = Mathf.Lerp(engineRPM, targetEngineRPM * clutchValue * limiterEffect, Time.deltaTime / 0.3f);
+        float rpmChangeSpeed = isClutchEngaged ? 2.0f : 5.0f; // wolniej rośnie gdy sprzęgło wciśnięte
+        engineRPM = Mathf.Lerp(engineRPM, targetEngineRPM * clutchValue * limiterEffect, Time.deltaTime * rpmChangeSpeed);
 
         engineRPM = Mathf.Clamp(engineRPM, minEngineRPM, maxEngineRPM + 1000f);
 
         if (currentGear == Gear.N && Mathf.Abs(verticalInput) < 0.05f)
             targetEngineRPM = minEngineRPM + Mathf.Sin(Time.time * 5f) * 50f;
+    }
+
+    float GetTorqueFactorFromRPM()
+    {
+        float rpmNormalized = Mathf.InverseLerp(minEngineRPM, maxEngineRPM, engineRPM);
+        return Mathf.Clamp01(Mathf.Sin(rpmNormalized * Mathf.PI)); // krzywa sinusoidalna
     }
 
     void ApplyDriveTorque(float motor)
@@ -210,9 +224,9 @@ public class carScript : MonoBehaviour
 
     void ApplyBrakes()
     {
-        if (Mathf.Abs(verticalInput) < 0.1f)
+        if (Mathf.Abs(verticalInput) < 0.1f && currentSpeed > 1f)
         {
-            RearLeftWheel.brakeTorque = 200f; // delikatne hamowanie
+            RearLeftWheel.brakeTorque = 200f;
             RearRightWheel.brakeTorque = 200f;
         }
         else
@@ -247,36 +261,46 @@ public class carScript : MonoBehaviour
         wheel.sidewaysFriction = sideways;
     }
 
+    void AdjustRearTractionForPowerDrift()
+    {
+        bool shouldReduceGrip = verticalInput > 0.6f && currentSpeed > 20f;
+
+        WheelFrictionCurve frictionL = RearLeftWheel.sidewaysFriction;
+        WheelFrictionCurve frictionR = RearRightWheel.sidewaysFriction;
+
+        float targetStiffness = shouldReduceGrip ? 0.6f : 1.5f;
+
+        frictionL.stiffness = Mathf.Lerp(frictionL.stiffness, targetStiffness, Time.deltaTime * 5f);
+        frictionR.stiffness = Mathf.Lerp(frictionR.stiffness, targetStiffness, Time.deltaTime * 5f);
+
+        RearLeftWheel.sidewaysFriction = frictionL;
+        RearRightWheel.sidewaysFriction = frictionR;
+    }
+
     void SetWheelFriction(WheelCollider wheel)
     {
         WheelFrictionCurve forward = wheel.forwardFriction;
         WheelFrictionCurve sideways = wheel.sidewaysFriction;
 
-        forward.stiffness = 1.5f;
-        sideways.stiffness = 2.0f;
+        bool isRear = (wheel == RearLeftWheel || wheel == RearRightWheel);
+
+        forward.stiffness = isRear ? 1.2f : 1.5f;
+        sideways.stiffness = isRear ? 1.0f : 2.5f;
 
         wheel.forwardFriction = forward;
         wheel.sidewaysFriction = sideways;
     }
 
-    void AdjustDriftFriction(float driftFactor)
-    {
-        AdjustWheelFriction(FrontLeftWheel, driftFactor);
-        AdjustWheelFriction(FrontRightWheel, driftFactor);
-        AdjustWheelFriction(RearLeftWheel, driftFactor);
-        AdjustWheelFriction(RearRightWheel, driftFactor);
-    }
+    //void AdjustWheelFriction(WheelCollider wheel, float driftFactor)
+    //{
+    //    WheelFrictionCurve sideways = wheel.sidewaysFriction;
+    //    bool isRear = (wheel == RearLeftWheel || wheel == RearRightWheel);
+    //    float min = isRear ? 0.8f : 1.2f;
+    //    float max = isRear ? 2.0f : 3.0f;
 
-    void AdjustWheelFriction(WheelCollider wheel, float driftFactor)
-    {
-        WheelFrictionCurve sideways = wheel.sidewaysFriction;
-        bool isRear = (wheel == RearLeftWheel || wheel == RearRightWheel);
-        float min = isRear ? 0.8f : 1.2f;
-        float max = isRear ? 2.0f : 3.0f;
-
-        sideways.stiffness = Mathf.Lerp(min, max, driftFactor);
-        wheel.sidewaysFriction = sideways;
-    }
+    //    sideways.stiffness = Mathf.Lerp(min, max, driftFactor);
+    //    wheel.sidewaysFriction = sideways;
+    //}
 
     void SetupSuspension(WheelCollider wheel, bool isFront)
     {
@@ -288,16 +312,11 @@ public class carScript : MonoBehaviour
         wheel.suspensionSpring = spring;
         wheel.suspensionDistance = 0.3f;
 
-        float driftAmount = driftSlider != null ? driftSlider.value : 1.5f;
-        float speedFactor = Mathf.Clamp01(currentSpeed / 120f);
-        float baseStiffness = isFront ? 2.0f : 1.2f;
-        float adjustedStiffness = Mathf.Lerp(baseStiffness, driftAmount, 1f - speedFactor);
-
         WheelFrictionCurve forward = wheel.forwardFriction;
         WheelFrictionCurve sideways = wheel.sidewaysFriction;
 
-        forward.stiffness = isFront ? 1.5f : adjustedStiffness * 0.9f;
-        sideways.stiffness = adjustedStiffness;
+        forward.stiffness = isFront ? 1.5f : 1.2f;
+        sideways.stiffness = isFront ? 2.5f : 1.0f;
 
         wheel.forwardFriction = forward;
         wheel.sidewaysFriction = sideways;
@@ -338,8 +357,10 @@ public class carScript : MonoBehaviour
 
     bool CanMoveFromCurrentGear(float speedKmh)
     {
-        if (currentGear == Gear.R || currentGear == Gear.First) return true;
-        return speedKmh >= 10f;
+        if (currentGear == Gear.R || currentGear == Gear.First)
+            return true;
+
+        return speedKmh >= 10f || Mathf.Abs(verticalInput) > 0.1f;
     }
 
     void OnGUI()
@@ -355,6 +376,6 @@ public class carScript : MonoBehaviour
         GUI.Label(new Rect(20, 80, 300, 30), "RPM: " + engineRPM.ToString("F0"), style);
         GUI.Label(new Rect(20, 110, 300, 30), "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1"), style);
 
-        Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}");
+        Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, Clutch: {clutchValue}, MotorTorque RL: {RearLeftWheel.motorTorque}");
     }
 }
