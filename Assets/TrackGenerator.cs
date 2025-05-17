@@ -1,93 +1,142 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class SmoothTrackGenerator : MonoBehaviour
+public class InfiniteTrackGenerator : MonoBehaviour
 {
     [Header("Base Settings")]
     public GameObject trackSegmentPrefab;
-    public int totalSegments = 20;
-    public float segmentLength = 10f;
+    public float segmentLength = 1f; // D³ugoœæ pojedynczego segmentu
     public float trackWidth = 8f;
-    public float maxAngle = 30f;
+    public float maxCurvature = 45f;
+    public Transform vehicle; // Referencja do pojazdu
 
-    [Header("Visuals")]
-    public Material trackMaterial;
-    public bool addGuardrails = true;
-    public GameObject guardrailPrefab;
+    [Header("Generation Settings")]
+    public int segmentsAhead = 100; // Liczba segmentów do generowania przed pojazdem
+    public int segmentsBehind = 30; // Liczba segmentów do utrzymania za pojazdem
+    public float cleanupCheckInterval = 0.5f; // Co ile sekund sprawdzaæ do usuniêcia
 
+    [Header("Noise Settings")]
+    public float noiseFrequency = 0.1f;
+    private Vector2 noiseOffset;
+
+    private Queue<GameObject> segmentsQueue = new Queue<GameObject>();
     private Vector3 lastPosition;
     private Quaternion lastRotation;
-    private GameObject lastSegment;
+    private float nextCleanupTime;
+    private int lastCleanSegmentIndex = 0;
 
     void Start()
     {
-        lastPosition = transform.position;
-        lastRotation = transform.rotation;
-        GenerateConnectedTrack();
+        if (vehicle == null)
+        {
+            Debug.LogError("Vehicle reference not set in TrackGenerator!");
+            enabled = false;
+            return;
+        }
+
+        noiseOffset = new Vector2(
+            Random.Range(0f, 1000f),
+            Random.Range(0f, 1000f)
+        );
+
+        // Inicjalizacja pozycji startowej
+        lastPosition = vehicle.position - vehicle.forward * segmentsBehind * segmentLength;
+        lastRotation = vehicle.rotation;
+
+        // Generowanie pocz¹tkowej drogi
+        GenerateInitialTrack();
     }
 
-    void GenerateConnectedTrack()
+    void Update()
     {
-        for (int i = 0; i < totalSegments; i++)
+        // Generuj nowe segmenty jeœli potrzeba
+        if (segmentsQueue.Count == 0 ||
+            Vector3.Distance(vehicle.position, lastPosition) < segmentsAhead * segmentLength)
         {
-            // Losowy k¹t zakrêtu (bardziej p³ynne przejœcia)
-            float angle = Mathf.Lerp(-maxAngle, maxAngle, Mathf.PerlinNoise(i * 0.3f, 0));
+            GenerateSegment();
+        }
 
-            // Oblicz now¹ pozycjê i rotacjê
-            Quaternion newRotation = lastRotation * Quaternion.Euler(0, angle, 0);
-            Vector3 newPosition = lastPosition + newRotation * Vector3.forward * segmentLength;
-
-            // Stwórz segment
-            GameObject segment = Instantiate(
-                trackSegmentPrefab,
-                newPosition,
-                newRotation
-            );
-
-            // Dostosuj skalê i nazwê
-            segment.transform.localScale = new Vector3(trackWidth, 1f, segmentLength);
-            segment.name = "TrackSegment_" + i;
-
-            // Dodaj collider (jeœli prefab go nie ma)
-            if (segment.GetComponent<MeshCollider>() == null)
-            {
-                MeshCollider collider = segment.AddComponent<MeshCollider>();
-                collider.convex = false;
-            }
-
-            // Po³¹cz z poprzednim segmentem (wa¿ne dla p³ynnoœci)
-            if (lastSegment != null)
-            {
-                ConnectSegments(lastSegment, segment);
-            }
-
-            //// Dodaj barierki (opcjonalne)
-            //if (addGuardrails && guardrailPrefab != null)
-            //{
-            //    AddGuardrails(segment);
-            //}
-
-            lastPosition = newPosition;
-            lastRotation = newRotation;
-            lastSegment = segment;
+        // Okresowe czyszczenie starych segmentów
+        if (Time.time >= nextCleanupTime)
+        {
+            CleanupOldSegments();
+            nextCleanupTime = Time.time + cleanupCheckInterval;
         }
     }
 
-    void ConnectSegments(GameObject prevSegment, GameObject nextSegment)
+    void GenerateInitialTrack()
     {
-        // Dopasuj pozycjê, aby unikn¹æ przerw
-        Vector3 correctedPosition = prevSegment.transform.position +
-                                   prevSegment.transform.forward * (segmentLength * 0.4f) +
-                                   nextSegment.transform.forward * (segmentLength * 0.4f);
-
-        nextSegment.transform.position = correctedPosition;
+        for (int i = 0; i < segmentsAhead + segmentsBehind; i++)
+        {
+            GenerateSegment();
+        }
     }
 
-    //void AddGuardrails(GameObject segment)
-    //{
-    //    Vector3 leftRailPos = segment.transform.position + (-segment.transform.right * (trackWidth * 0.5f));
-    //    Vector3 rightRailPos = segment.transform.position + (segment.transform.right * (trackWidth * 0.5f));
+    void GenerateSegment()
+    {
+        // Oblicz now¹ rotacjê na podstawie szumu Perlina
+        float noiseValue = Mathf.PerlinNoise(
+            segmentsQueue.Count * noiseFrequency + noiseOffset.x,
+            noiseOffset.y
+        );
 
-    //    Instantiate(guardrailPrefab, leftRailPos, segment.transform.rotation, segment.transform);
-    //    Instantiate(guardrailPrefab, rightRailPos, segment.transform.rotation, segment.transform);
-    //}
+        float targetAngle = Mathf.Lerp(-maxCurvature, maxCurvature, noiseValue);
+        lastRotation *= Quaternion.Euler(0, targetAngle * Time.deltaTime, 0);
+
+        // Oblicz now¹ pozycjê
+        lastPosition += lastRotation * Vector3.forward * segmentLength;
+
+        // Utwórz segment
+        GameObject segment = Instantiate(trackSegmentPrefab, lastPosition, lastRotation);
+        segment.transform.localScale = new Vector3(trackWidth, 1f, segmentLength);
+        segment.transform.SetParent(transform);
+
+        segmentsQueue.Enqueue(segment);
+    }
+
+    void CleanupOldSegments()
+    {
+        while (segmentsQueue.Count > segmentsAhead + segmentsBehind)
+        {
+            Destroy(segmentsQueue.Dequeue());
+        }
+
+        // Dodatkowe czyszczenie zbyt odleg³ych segmentów
+        var segmentsArray = segmentsQueue.ToArray();
+        for (int i = lastCleanSegmentIndex; i < segmentsArray.Length; i++)
+        {
+            if (Vector3.Distance(vehicle.position, segmentsArray[i].transform.position) >
+                (segmentsBehind + 10) * segmentLength)
+            {
+                Destroy(segmentsArray[i]);
+                lastCleanSegmentIndex = i + 1;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    public void ResetTrack()
+    {
+        // Usuñ wszystkie istniej¹ce segmenty
+        while (segmentsQueue.Count > 0)
+        {
+            Destroy(segmentsQueue.Dequeue());
+        }
+
+        // Zresetuj pozycjê generowania
+        lastPosition = vehicle.position - vehicle.forward * segmentsBehind * segmentLength;
+        lastRotation = vehicle.rotation;
+
+        // Wygeneruj nowy odcinek pocz¹tkowy
+        GenerateInitialTrack();
+
+        // Nowy offset szumu dla œwie¿ej trasy
+        noiseOffset = new Vector2(
+            Random.Range(0f, 1000f),
+            Random.Range(0f, 1000f)
+        );
+    }
 }

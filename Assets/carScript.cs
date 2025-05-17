@@ -15,6 +15,7 @@ public class carScript : MonoBehaviour
     public float steerspeed = 50f;
     public float brakeForce = 60000f;
     public float handbrakeForce = 150000f;
+    public float idleBrakeForce = 4000f; // <-- Nowy parametr hamowania na luzie
 
     //Silnik i sprzęgło
     public float maxEngineRPM = 7000f;
@@ -58,10 +59,16 @@ public class carScript : MonoBehaviour
 
         rigid.centerOfMass = new Vector3(0, -0.5f, -0.3f);
 
+        rigid.linearDamping = 0.05f;
+        rigid.angularDamping = 0.1f;
+
         SetupSuspension(FrontLeftWheel, true);
         SetupSuspension(FrontRightWheel, true);
         SetupSuspension(RearLeftWheel, false);
         SetupSuspension(RearRightWheel, false);
+
+        // Zastosuj hamulce na początku, żeby auto nie jechało
+        ApplyIdleBrake();
     }
 
     void Update()
@@ -104,9 +111,19 @@ public class carScript : MonoBehaviour
         wheelRPM = (rigid.linearVelocity.magnitude / (2 * Mathf.PI * 0.34f)) * 60f;
 
         UpdateEngineRPM();
-        rigid.AddForce(Vector3.down * 10.0f, ForceMode.Acceleration);
+
+        // Zmniejszone siły grawitacji lub siła odpowiednia dla pojazdu
+        rigid.AddForce(Vector3.down * 9.81f, ForceMode.Acceleration);
 
         float motor = 0f;
+
+        // Resetuj napęd kół przy braku wejścia
+        if (Mathf.Abs(verticalInput) < 0.05f)
+        {
+            ResetWheelTorques();
+            ApplyIdleBrake();
+            return;
+        }
 
         if (currentGear != Gear.N)
         {
@@ -146,8 +163,9 @@ public class carScript : MonoBehaviour
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0f);
 
-        AntiRoll(FrontLeftWheel, FrontRightWheel);
-        AntiRoll(RearLeftWheel, RearRightWheel);
+        // Zmniejszona siła anti-roll
+        AntiRoll(FrontLeftWheel, FrontRightWheel, 4000f);
+        AntiRoll(RearLeftWheel, RearRightWheel, 4000f);
 
         CalculateDriftPoints();
 
@@ -158,6 +176,37 @@ public class carScript : MonoBehaviour
 
         float downforce = currentSpeed * 30f;
         rigid.AddForce(-transform.up * downforce);
+    }
+
+    // Nowa metoda resetowania napędu kół
+    void ResetWheelTorques()
+    {
+        FrontLeftWheel.motorTorque = 0f;
+        FrontRightWheel.motorTorque = 0f;
+        RearLeftWheel.motorTorque = 0f;
+        RearRightWheel.motorTorque = 0f;
+    }
+
+    // Nowa metoda hamowania na luzie
+    void ApplyIdleBrake()
+    {
+        // Hamowanie na luzie - zatrzyma auto, gdy nie ma inputu
+        if (currentSpeed < 0.5f)
+        {
+            // Mocniejsze hamowanie dla zatrzymania pojazdu
+            FrontLeftWheel.brakeTorque = idleBrakeForce * 2;
+            FrontRightWheel.brakeTorque = idleBrakeForce * 2;
+            RearLeftWheel.brakeTorque = idleBrakeForce * 2;
+            RearRightWheel.brakeTorque = idleBrakeForce * 2;
+        }
+        else
+        {
+            // Standardowe hamowanie przy jeździe bez gazu
+            FrontLeftWheel.brakeTorque = idleBrakeForce;
+            FrontRightWheel.brakeTorque = idleBrakeForce;
+            RearLeftWheel.brakeTorque = idleBrakeForce;
+            RearRightWheel.brakeTorque = idleBrakeForce;
+        }
     }
 
     void UpdateEngineRPM()
@@ -173,7 +222,12 @@ public class carScript : MonoBehaviour
         {
             float gearRatio = gearRatios[(int)currentGear + 1];
             float wheelBasedRPM = Mathf.Abs(wheelRPM * gearRatio);
-            targetEngineRPM = Mathf.Lerp(wheelBasedRPM, maxEngineRPM, Mathf.Clamp01(verticalInput));
+
+            // Nie przyśpieszaj automatycznie bez wciśniętego gazu
+            if (Mathf.Abs(verticalInput) > 0.05f)
+                targetEngineRPM = Mathf.Lerp(wheelBasedRPM, maxEngineRPM, Mathf.Clamp01(verticalInput));
+            else
+                targetEngineRPM = wheelBasedRPM;
         }
 
         if (engineRPM >= maxEngineRPM && verticalInput > 0.1f)
@@ -209,6 +263,13 @@ public class carScript : MonoBehaviour
 
     void ApplyDriveTorque(float motor)
     {
+        // Nie stosuj napędu przy braku inputu
+        if (Mathf.Abs(verticalInput) < 0.05f)
+        {
+            ResetWheelTorques();
+            return;
+        }
+
         if (currentDrive == DriveType.RWD || currentDrive == DriveType.AWD)
         {
             RearLeftWheel.motorTorque = motor;
@@ -226,10 +287,12 @@ public class carScript : MonoBehaviour
     {
         bool isCoasting = Mathf.Abs(verticalInput) < 0.1f && currentSpeed > 1f;
 
-        float coastBrake = isCoasting ? 400f : 0f;
-
-        RearLeftWheel.brakeTorque = coastBrake;
-        RearRightWheel.brakeTorque = coastBrake;
+        // Automatyczne hamowanie przy braku gazu
+        if (isCoasting)
+        {
+            ApplyIdleBrake();
+            return;
+        }
 
         if (isBraking)
         {
@@ -240,16 +303,18 @@ public class carScript : MonoBehaviour
             RearLeftWheel.brakeTorque = appliedBrake;
             RearRightWheel.brakeTorque = appliedBrake;
         }
-        else
+        else if (Mathf.Abs(verticalInput) > 0.05f)
         {
+            // Zwolnij hamulce tylko gdy wciśnięty jest gaz
             FrontLeftWheel.brakeTorque = 0f;
             FrontRightWheel.brakeTorque = 0f;
-
-            if (!isCoasting)
-            {
-                RearLeftWheel.brakeTorque = 0f;
-                RearRightWheel.brakeTorque = 0f;
-            }
+            RearLeftWheel.brakeTorque = 0f;
+            RearRightWheel.brakeTorque = 0f;
+        }
+        else
+        {
+            // Zastosuj hamulce przy braku inputu
+            ApplyIdleBrake();
         }
 
         if (isHandBraking)
@@ -307,17 +372,6 @@ public class carScript : MonoBehaviour
         wheel.sidewaysFriction = sideways;
     }
 
-    //void AdjustWheelFriction(WheelCollider wheel, float driftFactor)
-    //{
-    //    WheelFrictionCurve sideways = wheel.sidewaysFriction;
-    //    bool isRear = (wheel == RearLeftWheel || wheel == RearRightWheel);
-    //    float min = isRear ? 0.8f : 1.2f;
-    //    float max = isRear ? 2.0f : 3.0f;
-
-    //    sideways.stiffness = Mathf.Lerp(min, max, driftFactor);
-    //    wheel.sidewaysFriction = sideways;
-    //}
-
     void SetupSuspension(WheelCollider wheel, bool isFront)
     {
         JointSpring spring = wheel.suspensionSpring;
@@ -338,7 +392,8 @@ public class carScript : MonoBehaviour
         wheel.sidewaysFriction = sideways;
     }
 
-    void AntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
+    // Zmodyfikowana funkcja AntiRoll
+    void AntiRoll(WheelCollider leftWheel, WheelCollider rightWheel, float antiRollForceMultiplier)
     {
         WheelHit hit;
         float travelLeft = 1f;
@@ -352,7 +407,11 @@ public class carScript : MonoBehaviour
         if (groundedRight)
             travelRight = (-rightWheel.transform.InverseTransformPoint(hit.point).y - rightWheel.radius) / rightWheel.suspensionDistance;
 
-        float antiRollForce = (travelLeft - travelRight) * 8000f;
+        float antiRollForce = (travelLeft - travelRight) * antiRollForceMultiplier;
+
+        // Nie dodawaj sił, gdy pojazd stoi w miejscu
+        if (currentSpeed < 0.5f)
+            return;
 
         if (groundedLeft)
             rigid.AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
@@ -391,7 +450,8 @@ public class carScript : MonoBehaviour
         GUI.Label(new Rect(20, 50, 300, 30), "Bieg: " + currentGear.ToString(), style);
         GUI.Label(new Rect(20, 80, 300, 30), "RPM: " + engineRPM.ToString("F0"), style);
         GUI.Label(new Rect(20, 110, 300, 30), "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1"), style);
+        GUI.Label(new Rect(20, 140, 300, 30), "Input: " + verticalInput.ToString("F2"), style);
 
-        Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, Clutch: {clutchValue}, MotorTorque RL: {RearLeftWheel.motorTorque}");
+        Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, MotorTorque RL: {RearLeftWheel.motorTorque}, Vertical Input: {verticalInput}");
     }
 }

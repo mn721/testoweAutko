@@ -565,7 +565,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 73a8db7b6d4443b4aac139475dd611b9, type: 2}
     - target: {fileID: 7495443279060062592, guid: 133308cdb8794744caaef026bde9e1f0, type: 3}
       propertyPath: m_Mass
-      value: 2000
+      value: 1500
       objectReference: {fileID: 0}
     - target: {fileID: 8083670537106556971, guid: 133308cdb8794744caaef026bde9e1f0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -1431,6 +1431,7 @@ MonoBehaviour:
   steerspeed: 25
   brakeForce: 3000
   handbrakeForce: 20000
+  idleBrakeForce: 4000
   maxEngineRPM: 7000
   minEngineRPM: 800
   currentGear: 0
@@ -2047,7 +2048,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.025661, y: -1.2538121, z: 42.239185}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1564705648}
@@ -2066,13 +2067,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackSegmentPrefab: {fileID: 1940182801604103029, guid: dc0bca5a20cfbd340bb90c4c8aa1e879, type: 3}
-  totalSegments: 50
-  segmentLength: 20
-  trackWidth: 10
-  maxAngle: 90
-  trackMaterial: {fileID: 10756, guid: 0000000000000000e000000000000000, type: 0}
-  addGuardrails: 1
-  guardrailPrefab: {fileID: 436747204867206322, guid: 78f12447750dfc2429d99d6a3e7a43f8, type: 3}
+  segmentLength: 15
+  trackWidth: 40
+  maxCurvature: 90
+  vehicle: {fileID: 1416094613}
+  segmentsAhead: 100
+  segmentsBehind: 30
+  cleanupCheckInterval: 0.5
+  noiseFrequency: 0.15
 --- !u!1 &1322721552
 GameObject:
   m_ObjectHideFlags: 0
@@ -2126,10 +2128,11 @@ MonoBehaviour:
   FrontRightWheel: {fileID: 657828497}
   RearLeftWheel: {fileID: 356738363}
   RearRightWheel: {fileID: 366721981}
-  drivespeed: 50000
+  drivespeed: 30000
   steerspeed: 50
   brakeForce: 60000
   handbrakeForce: 150000
+  idleBrakeForce: 4000
   maxEngineRPM: 7000
   minEngineRPM: 1000
   currentGear: 0

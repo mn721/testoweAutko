@@ -1,2 +1,14 @@
 fileFormatVersion: 2
 guid: a954588f8058afb4ba9b7ecb385f2282
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - trackSegmentPrefab: {fileID: 1940182801604103029, guid: dc0bca5a20cfbd340bb90c4c8aa1e879, type: 3}
+  - trackMaterial: {fileID: 2100000, guid: d60e99d7307026c45a79054c68c6a0d7, type: 2}
+  - guardrailPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
