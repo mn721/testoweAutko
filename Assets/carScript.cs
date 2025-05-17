@@ -224,25 +224,35 @@ public class carScript : MonoBehaviour
 
     void ApplyBrakes()
     {
-        if (Mathf.Abs(verticalInput) < 0.1f && currentSpeed > 1f)
-        {
-            RearLeftWheel.brakeTorque = 200f;
-            RearRightWheel.brakeTorque = 200f;
-        }
-        else
-        {
-            RearLeftWheel.brakeTorque = 0f;
-            RearRightWheel.brakeTorque = 0f;
-        }
+        bool isCoasting = Mathf.Abs(verticalInput) < 0.1f && currentSpeed > 1f;
+
+        float coastBrake = isCoasting ? 400f : 0f;
+
+        RearLeftWheel.brakeTorque = coastBrake;
+        RearRightWheel.brakeTorque = coastBrake;
 
         if (isBraking)
         {
-            FrontLeftWheel.brakeTorque = brakeForce;
-            FrontRightWheel.brakeTorque = brakeForce;
-            RearLeftWheel.brakeTorque = brakeForce;
-            RearRightWheel.brakeTorque = brakeForce;
+            float appliedBrake = brakeForce;
+
+            FrontLeftWheel.brakeTorque = appliedBrake;
+            FrontRightWheel.brakeTorque = appliedBrake;
+            RearLeftWheel.brakeTorque = appliedBrake;
+            RearRightWheel.brakeTorque = appliedBrake;
         }
-        else if (isHandBraking)
+        else
+        {
+            FrontLeftWheel.brakeTorque = 0f;
+            FrontRightWheel.brakeTorque = 0f;
+
+            if (!isCoasting)
+            {
+                RearLeftWheel.brakeTorque = 0f;
+                RearRightWheel.brakeTorque = 0f;
+            }
+        }
+
+        if (isHandBraking)
         {
             SetWheelDriftMode(RearLeftWheel, true);
             SetWheelDriftMode(RearRightWheel, true);
@@ -263,15 +273,21 @@ public class carScript : MonoBehaviour
 
     void AdjustRearTractionForPowerDrift()
     {
-        bool shouldReduceGrip = verticalInput > 0.6f && currentSpeed > 20f;
+        if (currentSpeed > 120f)
+            return;
+
+        bool isAggressiveThrottle = verticalInput > 0.9f;
+        bool isSharpTurning = Mathf.Abs(horizontalInput) > 0.5f;
+        bool shouldReduceGrip = isAggressiveThrottle && isSharpTurning && currentSpeed > 40f;
 
         WheelFrictionCurve frictionL = RearLeftWheel.sidewaysFriction;
         WheelFrictionCurve frictionR = RearRightWheel.sidewaysFriction;
 
-        float targetStiffness = shouldReduceGrip ? 0.6f : 1.5f;
+        float targetStiffness = shouldReduceGrip ? 1.35f : 1.5f;
+        float lerpSpeed = 1.5f;
 
-        frictionL.stiffness = Mathf.Lerp(frictionL.stiffness, targetStiffness, Time.deltaTime * 5f);
-        frictionR.stiffness = Mathf.Lerp(frictionR.stiffness, targetStiffness, Time.deltaTime * 5f);
+        frictionL.stiffness = Mathf.Max(1.25f, Mathf.Lerp(frictionL.stiffness, targetStiffness, Time.deltaTime * lerpSpeed));
+        frictionR.stiffness = Mathf.Max(1.25f, Mathf.Lerp(frictionR.stiffness, targetStiffness, Time.deltaTime * lerpSpeed));
 
         RearLeftWheel.sidewaysFriction = frictionL;
         RearRightWheel.sidewaysFriction = frictionR;
