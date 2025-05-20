@@ -44,6 +44,13 @@ public class carScript : MonoBehaviour
     public TMP_Text driftPointsText;
     private float driftPoints = 0f;
 
+    //GUI
+    public Text _velocity;
+    public Text _gear;
+    public Text _rpm;
+    public TMP_Text _driftAngle;
+    public TMP_Text _input; 
+
     //Inne
     public float currentSpeed = 0f;
     private float horizontalInput, verticalInput;
@@ -103,6 +110,8 @@ public class carScript : MonoBehaviour
             if (clutchTimer <= 0f)
                 isClutchEngaged = true;
         }
+
+        updateGUI();
     }
 
     void FixedUpdate()
@@ -438,19 +447,14 @@ public class carScript : MonoBehaviour
         return speedKmh >= 10f || Mathf.Abs(verticalInput) > 0.1f;
     }
 
-    void OnGUI()
+    void updateGUI()
     {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 20;
-        style.normal.textColor = Color.white;
-
         float speed = rigid.linearVelocity.magnitude * 3.6f;
-
-        GUI.Label(new Rect(20, 20, 300, 30), "Predkosc: " + speed.ToString("F1") + " km/h", style);
-        GUI.Label(new Rect(20, 50, 300, 30), "Bieg: " + currentGear.ToString(), style);
-        GUI.Label(new Rect(20, 80, 300, 30), "RPM: " + engineRPM.ToString("F0"), style);
-        GUI.Label(new Rect(20, 110, 300, 30), "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1"), style);
-        GUI.Label(new Rect(20, 140, 300, 30), "Input: " + verticalInput.ToString("F2"), style);
+        _velocity.text = "Predkosc: " + speed.ToString("F1") + " km/h";
+        _gear.text = "Bieg: " + currentGear.ToString();
+        _rpm.text = "RPM: " + engineRPM.ToString("F0");
+        _driftAngle.text = "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1");
+        _input.text = "Input: " + verticalInput.ToString("F2");
 
         Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, MotorTorque RL: {RearLeftWheel.motorTorque}, Vertical Input: {verticalInput}");
     }
