@@ -5,14 +5,14 @@ public class InfiniteTrackGenerator : MonoBehaviour
 {
     [Header("Base Settings")]
     public GameObject trackSegmentPrefab;
-    public float segmentLength = 1f; // D³ugoœæ pojedynczego segmentu
+    public float segmentLength = 1.5f; // D³ugoœæ pojedynczego segmentu
     public float trackWidth = 8f;
     public float maxCurvature = 45f;
     public Transform vehicle; // Referencja do pojazdu
 
     [Header("Generation Settings")]
-    public int segmentsAhead = 100; // Liczba segmentów do generowania przed pojazdem
-    public int segmentsBehind = 30; // Liczba segmentów do utrzymania za pojazdem
+    public int segmentsAhead = 40; // Liczba segmentów do generowania przed pojazdem
+    public int segmentsBehind = 20; // Liczba segmentów do utrzymania za pojazdem
     public float cleanupCheckInterval = 0.5f; // Co ile sekund sprawdzaæ do usuniêcia
 
     [Header("Noise Settings")]
@@ -83,12 +83,13 @@ public class InfiniteTrackGenerator : MonoBehaviour
         float targetAngle = Mathf.Lerp(-maxCurvature, maxCurvature, noiseValue);
         lastRotation *= Quaternion.Euler(0, targetAngle * Time.deltaTime, 0);
 
-        // Oblicz now¹ pozycjê
-        lastPosition += lastRotation * Vector3.forward * segmentLength;
+        // Oblicz now¹ pozycjê (skrócon¹ o 1/10 d³ugoœci segmentu)
+        float adjustedSegmentLength = segmentLength * 0.9f;
+        lastPosition += lastRotation * Vector3.forward * adjustedSegmentLength;
 
-        // Utwórz segment
+        // Utwórz segment (zachowaj oryginaln¹ skalê)
         GameObject segment = Instantiate(trackSegmentPrefab, lastPosition, lastRotation);
-        segment.transform.localScale = new Vector3(trackWidth, 1f, segmentLength);
+        segment.transform.localScale = new Vector3(trackWidth, 1f, segmentLength); // Zachowaj oryginaln¹ d³ugoœæ w skali
         segment.transform.SetParent(transform);
 
         segmentsQueue.Enqueue(segment);

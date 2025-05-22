@@ -453,8 +453,8 @@ public class carScript : MonoBehaviour
         _velocity.text = "Predkosc: " + speed.ToString("F1") + " km/h";
         _gear.text = "Bieg: " + currentGear.ToString();
         _rpm.text = "RPM: " + engineRPM.ToString("F0");
-        _driftAngle.text = "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1");
-        _input.text = "Input: " + verticalInput.ToString("F2");
+        //_driftAngle.text = "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1");
+        //_input.text = "Input: " + verticalInput.ToString("F2");
 
         Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, MotorTorque RL: {RearLeftWheel.motorTorque}, Vertical Input: {verticalInput}");
     }
