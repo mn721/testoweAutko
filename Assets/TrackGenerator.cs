@@ -8,41 +8,46 @@ public class RoadGenerator : MonoBehaviour
     public int initialSegments = 3;
     public float spawnDistance = 50f;
     public float despawnDistance = 30f;
+    public float maxTurnAngle = 5f;
+    [Range(0, 1)] public float turnChance = 0.3f;
 
     private Queue<GameObject> segmentsQueue = new Queue<GameObject>();
-    private float segmentLength;
-    private Vector3 nextSpawnPoint;
+    private float segmentLength = 35;
+    private Vector3 currentPosition;
+    private Quaternion currentRotation;
 
     void Start()
     {
-        // Pobierz d³ugoœæ segmentu z prefabrykatu
-        segmentLength = 20;//roadSegmentPrefab.GetComponent<RoadSegment>().segmentLength;
+        currentPosition = Vector3.zero;
+        currentRotation = Quaternion.identity;
 
-        // Wygeneruj pocz¹tkow¹ drogê
-        nextSpawnPoint = Vector3.zero;
+        // Pocz¹tkowe segmenty proste
+        float originalTurnChance = turnChance;
+        turnChance = 0;
+
         for (int i = 0; i < initialSegments; i++)
         {
             SpawnSegment();
         }
 
-        // Ustaw pozycjê startow¹ auta
+        turnChance = originalTurnChance;
+
         if (carTransform != null)
         {
-            carTransform.position = nextSpawnPoint + Vector3.up * 2 - Vector3.forward * segmentLength * initialSegments;
+            carTransform.position = currentPosition + Vector3.up * 2 - currentRotation * Vector3.forward * segmentLength * initialSegments;
+            carTransform.rotation = currentRotation;
         }
     }
 
     void Update()
     {
-        // SprawdŸ czy trzeba wygenerowaæ nowy segment
-        if (Vector3.Distance(carTransform.position, nextSpawnPoint) < spawnDistance)
+        if (Vector3.Distance(carTransform.position, currentPosition) < spawnDistance)
         {
             SpawnSegment();
         }
 
-        // Usuñ stare segmenty
         if (segmentsQueue.Count > 0 &&
-            carTransform.position.z - segmentsQueue.Peek().transform.position.z > despawnDistance)
+            Vector3.Distance(carTransform.position, segmentsQueue.Peek().transform.position) > despawnDistance)
         {
             Destroy(segmentsQueue.Dequeue());
         }
@@ -50,13 +55,18 @@ public class RoadGenerator : MonoBehaviour
 
     void SpawnSegment()
     {
-        GameObject newSegment = Instantiate(
-            roadSegmentPrefab,
-            nextSpawnPoint,
-            Quaternion.identity
-        );
-
+        GameObject newSegment = Instantiate(roadSegmentPrefab, currentPosition, currentRotation);
         segmentsQueue.Enqueue(newSegment);
-        nextSpawnPoint += Vector3.forward * segmentLength;
+
+        // Losowy skrêt
+        float turnAngle = 0f;
+        if (Random.value < turnChance)
+        {
+            turnAngle = Random.Range(-maxTurnAngle, maxTurnAngle);
+        }
+
+        // Aktualizacja pozycji i rotacji
+        currentRotation *= Quaternion.Euler(0, turnAngle, 0);
+        currentPosition += currentRotation * Vector3.forward * segmentLength;
     }
 }
