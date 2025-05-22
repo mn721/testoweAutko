@@ -456,6 +456,6 @@ public class carScript : MonoBehaviour
         //_driftAngle.text = "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1");
         //_input.text = "Input: " + verticalInput.ToString("F2");
 
-        Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, MotorTorque RL: {RearLeftWheel.motorTorque}, Vertical Input: {verticalInput}");
+        //Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, MotorTorque RL: {RearLeftWheel.motorTorque}, Vertical Input: {verticalInput}");
     }
 }

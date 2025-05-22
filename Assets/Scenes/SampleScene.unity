@@ -417,7 +417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2792218741957914664, guid: 133308cdb8794744caaef026bde9e1f0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0011504292
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2792218741957914664, guid: 133308cdb8794744caaef026bde9e1f0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2488,7 +2488,7 @@ Transform:
   m_GameObject: {fileID: 1261821446}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.025661, y: 0.1, z: 42.239185}
+  m_LocalPosition: {x: 14.025661, y: 0.2, z: 42.239185}
   m_LocalScale: {x: 1, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2507,15 +2507,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a954588f8058afb4ba9b7ecb385f2282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackSegmentPrefab: {fileID: 1940182801604103029, guid: dc0bca5a20cfbd340bb90c4c8aa1e879, type: 3}
-  segmentLength: 15
-  trackWidth: 40
-  maxCurvature: 60
-  vehicle: {fileID: 1416094613}
-  segmentsAhead: 100
-  segmentsBehind: 30
-  cleanupCheckInterval: 0.5
-  noiseFrequency: 0.15
+  roadSegmentPrefab: {fileID: 7416292504273881702, guid: 5dc6400fa87448447b2c357db4a9126f, type: 3}
+  initialSegments: 10
+  segmentLength: 0
+  maxSegments: 15
+  player: {fileID: 1416094613}
 --- !u!1 &1322721552
 GameObject:
   m_ObjectHideFlags: 0
@@ -2632,7 +2628,7 @@ Transform:
   m_GameObject: {fileID: 1564705647}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.49, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
