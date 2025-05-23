@@ -48,11 +48,19 @@ public class carScript : MonoBehaviour
     public Text _velocity;
     public Text _gear;
     public Text _rpm;
-    public TMP_Text _driftAngle;
-    public TMP_Text _input; 
+    /*public TMP_Text _driftAngle;
+    public TMP_Text _input; */
+
+    //Dystans i Czas
+    public Transform referencePoint;      
+    public float distanceToReference;    
+    public float totalDistance;
+    private Vector3 oldPosition;
+    private float startTime;
 
     //Inne
     public float currentSpeed = 0f;
+    public float averageSpeed;
     private float horizontalInput, verticalInput;
     private bool isHandBraking;
     private bool isBraking;
@@ -73,6 +81,12 @@ public class carScript : MonoBehaviour
         SetupSuspension(FrontRightWheel, true);
         SetupSuspension(RearLeftWheel, false);
         SetupSuspension(RearRightWheel, false);
+
+        //pozycja auta
+        oldPosition = transform.position; 
+        
+        //czas
+        startTime = Time.time;
 
         // Zastosuj hamulce na początku, żeby auto nie jechało
         ApplyIdleBrake();
@@ -109,6 +123,27 @@ public class carScript : MonoBehaviour
             clutchTimer -= Time.deltaTime;
             if (clutchTimer <= 0f)
                 isClutchEngaged = true;
+        }
+
+        //Całkowity dystans jaki przebyło auto
+        totalDistance += Vector3.Distance(transform.position, oldPosition);
+        oldPosition = transform.position;
+
+        if (referencePoint != null)
+        {
+            distanceToReference = Vector3.Distance(transform.position, referencePoint.position);
+        }
+
+        //Zliczanie średniej prędkości
+        float timePassed = Time.time - startTime;
+
+        if (timePassed > 0.1f) 
+        {
+            averageSpeed = (totalDistance / timePassed) * 3.6f;
+        }
+        else
+        {
+            averageSpeed = 0f;
         }
 
         updateGUI();
@@ -456,6 +491,5 @@ public class carScript : MonoBehaviour
         //_driftAngle.text = "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1");
         //_input.text = "Input: " + verticalInput.ToString("F2");
 
-        //Debug.Log($"Gear: {currentGear}, Engine RPM: {engineRPM}, Wheel RPM: {wheelRPM}, Speed: {currentSpeed}, MotorTorque RL: {RearLeftWheel.motorTorque}, Vertical Input: {verticalInput}");
     }
 }
