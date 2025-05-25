@@ -835,7 +835,7 @@ GameObject:
   - component: {fileID: 263459368}
   - component: {fileID: 263459367}
   m_Layer: 5
-  m_Name: needle
+  m_Name: needleRPM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2116,7 +2116,7 @@ GameObject:
   - component: {fileID: 786916597}
   - component: {fileID: 786916596}
   m_Layer: 5
-  m_Name: needle
+  m_Name: needleSpeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2191,7 +2191,7 @@ GameObject:
   - component: {fileID: 818124926}
   - component: {fileID: 818124925}
   m_Layer: 5
-  m_Name: background
+  m_Name: backgroundRPM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2236,7 +2236,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 97a5288e9ba09b14c843717149c88c03, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d8c501a79670a8408e303d735683c76, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2488,7 +2488,7 @@ GameObject:
   - component: {fileID: 880711231}
   - component: {fileID: 880711230}
   m_Layer: 5
-  m_Name: background
+  m_Name: backgroundSpeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2533,7 +2533,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 97a5288e9ba09b14c843717149c88c03, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3dd6fb83f7a4dfa4a9ea407601df52b5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

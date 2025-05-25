@@ -51,7 +51,7 @@ public class carScript : MonoBehaviour
     public RectTransform rpmNeedle;
     public RectTransform speedNeedle;
     public float maxNeedleAngle = -220f;  
-    public float minNeedleAngle = 40f;
+    public float minNeedleAngle = 0f;
 
     //Dystans i Czas
     public Transform referencePoint;      
