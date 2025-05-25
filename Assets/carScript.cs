@@ -48,8 +48,10 @@ public class carScript : MonoBehaviour
     public Text _velocity;
     public Text _gear;
     public Text _rpm;
-    /*public TMP_Text _driftAngle;
-    public TMP_Text _input; */
+    public RectTransform rpmNeedle;
+    public RectTransform speedNeedle;
+    public float maxNeedleAngle = -220f;  
+    public float minNeedleAngle = 40f;
 
     //Dystans i Czas
     public Transform referencePoint;      
@@ -147,6 +149,7 @@ public class carScript : MonoBehaviour
         }
 
         updateGUI();
+        UpdateNeedles();
     }
 
     void FixedUpdate()
@@ -490,6 +493,16 @@ public class carScript : MonoBehaviour
         _rpm.text = "RPM: " + engineRPM.ToString("F0");
         //_driftAngle.text = "Drift Angle: " + Vector3.Angle(transform.forward, rigid.linearVelocity).ToString("F1");
         //_input.text = "Input: " + verticalInput.ToString("F2");
+    }
 
+    void UpdateNeedles()
+    {
+        float rpmNormalized = Mathf.InverseLerp(minEngineRPM, maxEngineRPM, engineRPM);
+        float rpmAngle = Mathf.Lerp(minNeedleAngle, maxNeedleAngle, rpmNormalized);
+        rpmNeedle.localRotation = Quaternion.Euler(0, 0, rpmAngle);
+
+        float speedNormalized = Mathf.InverseLerp(0, 240, currentSpeed);
+        float speedAngle = Mathf.Lerp(minNeedleAngle, maxNeedleAngle, speedNormalized);
+        speedNeedle.localRotation = Quaternion.Euler(0, 0, speedAngle);
     }
 }
