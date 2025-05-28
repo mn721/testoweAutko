@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{C1075484-D01C-D722-93CF-24E2F2D5F0B5}</ProjectGuid>
+    <ProjectGuid>{13C079E6-2C93-F8CF-D57C-7B8F183E7D44}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -55,7 +55,6 @@
     <UnityVersion>6000.0.43f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.43f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.43f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.43f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
@@ -1315,11 +1314,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{552F4BDF-3DB7-B3B7-6243-8A9187BFB6AD}</Project>
+      <Project>{018A855C-82AC-A335-D82D-B7C1FF9CC9D0}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
     <ProjectReference Include="RoadArchitect.csproj">
-      <Project>{073A0963-9233-906B-9429-1E3F3D07C3E0}</Project>
+      <Project>{7E6F5959-90CF-1C7C-BCBA-09D156AA715F}</Project>
       <Name>RoadArchitect</Name>
     </ProjectReference>
   </ItemGroup>
