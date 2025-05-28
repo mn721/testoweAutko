@@ -14,16 +14,16 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.025
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0.37
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
@@ -1595,6 +1595,9 @@ MonoBehaviour:
   idleBrakeForce: 4000
   maxEngineRPM: 7000
   minEngineRPM: 800
+  maxTorqueRPM: 4000
+  powerBandWidth: 2000
+  lowEndTorqueMultiplier: 0.6
   currentGear: 0
   gearRatios:
   - -3.5
@@ -2687,6 +2690,9 @@ MonoBehaviour:
   idleBrakeForce: 4000
   maxEngineRPM: 7000
   minEngineRPM: 1000
+  maxTorqueRPM: 4000
+  powerBandWidth: 2000
+  lowEndTorqueMultiplier: 0.6
   currentGear: 0
   gearRatios:
   - -3.5
@@ -3126,7 +3132,7 @@ MonoBehaviour:
   resolution: 10
   roadMaterial: {fileID: 2100000, guid: 38521757ea476c741ad23dcc3cb64934, type: 2}
   barrierPrefab: {fileID: 1365566380233372793, guid: 6c7bf425551b21447a0ef7b647a4c9d2, type: 3}
-  barrierSpacing: 4
+  barrierSpacing: 1
 --- !u!23 &1681801394
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3582,6 +3588,9 @@ MonoBehaviour:
   idleBrakeForce: 4000
   maxEngineRPM: 7000
   minEngineRPM: 1000
+  maxTorqueRPM: 4000
+  powerBandWidth: 2000
+  lowEndTorqueMultiplier: 0.6
   currentGear: 0
   gearRatios:
   - -3.2
