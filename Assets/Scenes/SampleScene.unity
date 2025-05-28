@@ -3606,8 +3606,8 @@ MonoBehaviour:
   _velocity: {fileID: 872651430}
   _gear: {fileID: 714606736}
   _rpm: {fileID: 2040210770}
-  rpmNeedle: {fileID: 0}
-  speedNeedle: {fileID: 0}
+  rpmNeedle: {fileID: 263459366}
+  speedNeedle: {fileID: 786916595}
   maxNeedleAngle: -220
   minNeedleAngle: 40
   referencePoint: {fileID: 0}
