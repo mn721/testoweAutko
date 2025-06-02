@@ -56,7 +56,7 @@ public class carScript : MonoBehaviour
     private float startTime;
 
     public float currentSpeed = 0f;
-    public float averageSpeed;
+    public float averageSpeed = 0f;
     private float horizontalInput, verticalInput;
     private bool isHandBraking;
     private bool isBraking;

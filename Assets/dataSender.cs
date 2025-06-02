@@ -4,13 +4,14 @@ using System.Collections;
 
 public class dataSender : MonoBehaviour
 {
+    [Header("Po³¹czenie HTTP")]
     public string javaServerUrl = "http://localhost:8080/api/data";
     public float sendInterval = 1.0f;
     private float timer = 0f;
 
     void Start()
     {
-        Debug.Log("Dziala");
+        Debug.Log("DataSender dzia³aj¹cy");
     }
     void Update()
     {
@@ -28,9 +29,9 @@ public class dataSender : MonoBehaviour
         {
             CurrentSpeed = GetComponent<carScript>().currentSpeed,
             AverageSpeed = GetComponent<carScript>().averageSpeed,
-            //DriftPoints = GetComponent<carScript>().DriftPoints, //do dorobienia
             DistanceToTarget = GetComponent<carScript>().distanceToReference,
-            DistanceTraveled = GetComponent<carScript>().totalDistance
+            DistanceTraveled = GetComponent<carScript>().totalDistance,
+            CurrentGear = GetComponent<carScript>().currentGear.ToString()
         };
 
         string json = JsonUtility.ToJson(gameData);
@@ -60,8 +61,8 @@ public class dataSender : MonoBehaviour
     {
         public float CurrentSpeed;
         public float AverageSpeed;
-        public int DriftPoints;
         public float DistanceTraveled;
         public float DistanceToTarget;
+        public string CurrentGear;
     }
 }

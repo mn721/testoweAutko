@@ -1,25 +1,25 @@
 m_ProjectFiles:
   m_ManifestFileStatus:
-    m_FilePath: C:/Users/ksawi/Desktop/autko/projektAuto/Packages/manifest.json
+    m_FilePath: C:/Users/CORSAIR/Desktop/C#Projekt/projektAuto/Packages/manifest.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638835255115814771
+      ticks: 638833519419739212
     m_Hash: 3746724217
   m_LockFileStatus:
-    m_FilePath: C:/Users/ksawi/Desktop/autko/projektAuto/Packages/packages-lock.json
+    m_FilePath: C:/Users/CORSAIR/Desktop/C#Projekt/projektAuto/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638835255115824763
+      ticks: 638833519419739212
     m_Hash: 3583156583
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
   m_LocalFileStatus: []
-m_ProjectPath: C:/Users/ksawi/Desktop/autko/projektAuto/Packages
+m_ProjectPath: C:/Users/CORSAIR/Desktop/C#Projekt/projektAuto/Packages
 m_EditorVersion: 6000.0.43f1 (97272b72f107)
 m_ResolvedPackages:
 - packageId: com.unity.ai.navigation@2.0.6
@@ -27,7 +27,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.0.6
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.ai.navigation@c74b2724ed42
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.ai.navigation@c74b2724ed42
   assetPath: Packages/com.unity.ai.navigation
   name: com.unity.ai.navigation
   displayName: AI Navigation
@@ -63,10 +63,12 @@ m_ResolvedPackages:
     - 2.0.5
     - 2.0.6
     - 2.0.7
+    - 2.0.8
     compatible:
     - 2.0.6
     - 2.0.7
-    recommended: 2.0.7
+    - 2.0.8
+    recommended: 2.0.8
     deprecated: []
   dependencies:
   - name: com.unity.modules.ai
@@ -146,7 +148,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.7.1
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.collab-proxy@50ac96531b63
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.collab-proxy@50ac96531b63
   assetPath: Packages/com.unity.collab-proxy
   name: com.unity.collab-proxy
   displayName: Version Control
@@ -333,7 +335,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 3.0.31
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.ide.rider@7921be93db40
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.ide.rider@7921be93db40
   assetPath: Packages/com.unity.ide.rider
   name: com.unity.ide.rider
   displayName: JetBrains Rider Editor
@@ -456,7 +458,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.0.22
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.ide.visualstudio@8140e851d83e
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.ide.visualstudio@8140e851d83e
   assetPath: Packages/com.unity.ide.visualstudio
   name: com.unity.ide.visualstudio
   displayName: Visual Studio Editor
@@ -564,7 +566,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.13.1
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.inputsystem@e2c83221d2dc
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.inputsystem@e2c83221d2dc
   assetPath: Packages/com.unity.inputsystem
   name: com.unity.inputsystem
   displayName: Input System
@@ -714,7 +716,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546
   assetPath: Packages/com.unity.multiplayer.center
   name: com.unity.multiplayer.center
   displayName: Multiplayer Center
@@ -804,7 +806,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 17.0.4
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.render-pipelines.universal@d680fce5716f
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.render-pipelines.universal@d680fce5716f
   assetPath: Packages/com.unity.render-pipelines.universal
   name: com.unity.render-pipelines.universal
   displayName: Universal RP
@@ -966,7 +968,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.7.2
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.splines@d3e1e500c9a0
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.splines@d3e1e500c9a0
   assetPath: Packages/com.unity.splines
   name: com.unity.splines
   displayName: Splines
@@ -1011,15 +1013,15 @@ m_ResolvedPackages:
     recommended: 2.7.2
     deprecated: []
   dependencies:
-  - name: com.unity.settings-manager
-    version: 1.0.3
   - name: com.unity.mathematics
     version: 1.2.1
-  resolvedDependencies:
   - name: com.unity.settings-manager
-    version: 2.0.1
+    version: 1.0.3
+  resolvedDependencies:
   - name: com.unity.mathematics
     version: 1.3.2
+  - name: com.unity.settings-manager
+    version: 2.0.1
   keywords:
   - spline
   - curve
@@ -1034,7 +1036,7 @@ m_ResolvedPackages:
     configSource: 0
   hideInEditor: 1
   entitlements:
-    licensingModel: 0
+    licensingModel: 1
   isAssetStorePackage: 0
   datePublishedTicks: 638678084074740000
   documentationUrl: 
@@ -1084,7 +1086,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 5.1.2
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.terrain-tools@d4bcf51a280e
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.terrain-tools@d4bcf51a280e
   assetPath: Packages/com.unity.terrain-tools
   name: com.unity.terrain-tools
   displayName: Terrain Tools
@@ -1200,7 +1202,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.4.6
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.test-framework@5ac417e07314
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.test-framework@5ac417e07314
   assetPath: Packages/com.unity.test-framework
   name: com.unity.test-framework
   displayName: Test Framework
@@ -1352,7 +1354,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.8.7
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.timeline@c58b4ee65782
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.timeline@c58b4ee65782
   assetPath: Packages/com.unity.timeline
   name: com.unity.timeline
   displayName: Timeline
@@ -1538,7 +1540,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.0.0
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.ugui@c82f62fefab3
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.ugui@c82f62fefab3
   assetPath: Packages/com.unity.ugui
   name: com.unity.ugui
   displayName: Unity UI
@@ -1630,7 +1632,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.9.5
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.visualscripting@1b53f46e931b
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.visualscripting@1b53f46e931b
   assetPath: Packages/com.unity.visualscripting
   name: com.unity.visualscripting
   displayName: Visual Scripting
@@ -4172,7 +4174,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 2.0.5
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.ext.nunit@60ef35ffd3cd
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.ext.nunit@60ef35ffd3cd
   assetPath: Packages/com.unity.ext.nunit
   name: com.unity.ext.nunit
   displayName: Custom NUnit
@@ -4246,88 +4248,12 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 2.0.5
     minimumUnityVersion: 2019.4.0a1
-- packageId: com.unity.settings-manager@2.0.1
-  testable: 0
-  isDirectDependency: 0
-  version: 2.0.1
-  source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.settings-manager@56a930affa1e
-  assetPath: Packages/com.unity.settings-manager
-  name: com.unity.settings-manager
-  displayName: Settings Manager
-  author:
-    name: 
-    email: 
-    url: 
-  category: 
-  type: 
-  description: A framework for making any serializable field a setting, complete
-    with a pre-built settings interface.
-  errors: []
-  versions:
-    all:
-    - 0.1.0-preview.4
-    - 0.1.0-preview.8
-    - 1.0.0
-    - 1.0.1
-    - 1.0.2
-    - 1.0.3
-    - 2.0.0
-    - 2.0.1
-    - 2.1.0
-    compatible:
-    - 2.0.1
-    - 2.1.0
-    recommended: 2.0.1
-    deprecated: []
-  dependencies: []
-  resolvedDependencies: []
-  keywords: []
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 0
-  isAssetStorePackage: 0
-  datePublishedTicks: 637744099390000000
-  documentationUrl: 
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.com/Unity-Technologies/com.unity.settings-manager.git
-    revision: 9b7c12d04ef880168151c127fd6b37b5931197dc
-    path: 
-  unityLifecycle:
-    version: 2.0.1
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: 
-  assetStore:
-    productId: 
-  fingerprint: 56a930affa1e4462d3595b5c19a1c2a4bf2015d2
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 2.0.1
-    minimumUnityVersion: 2018.4.0a1
 - packageId: com.unity.mathematics@1.3.2
   testable: 0
   isDirectDependency: 0
   version: 1.3.2
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.mathematics@8017b507cc74
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.mathematics@8017b507cc74
   assetPath: Packages/com.unity.mathematics
   name: com.unity.mathematics
   displayName: Mathematics
@@ -4411,12 +4337,88 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 1.3.2
     minimumUnityVersion: 2021.3.0a1
+- packageId: com.unity.settings-manager@2.0.1
+  testable: 0
+  isDirectDependency: 0
+  version: 2.0.1
+  source: 1
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.settings-manager@56a930affa1e
+  assetPath: Packages/com.unity.settings-manager
+  name: com.unity.settings-manager
+  displayName: Settings Manager
+  author:
+    name: 
+    email: 
+    url: 
+  category: 
+  type: asset
+  description: A framework for making any serializable field a setting, complete
+    with a pre-built settings interface.
+  errors: []
+  versions:
+    all:
+    - 0.1.0-preview.4
+    - 0.1.0-preview.8
+    - 1.0.0
+    - 1.0.1
+    - 1.0.2
+    - 1.0.3
+    - 2.0.0
+    - 2.0.1
+    - 2.1.0
+    compatible:
+    - 2.0.1
+    - 2.1.0
+    recommended: 2.0.1
+    deprecated: []
+  dependencies: []
+  resolvedDependencies: []
+  keywords: []
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+    configSource: 0
+  hideInEditor: 1
+  entitlements:
+    licensingModel: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 637744099390000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: https://github.com/Unity-Technologies/com.unity.settings-manager.git
+    revision: 9b7c12d04ef880168151c127fd6b37b5931197dc
+    path: 
+  unityLifecycle:
+    version: 2.0.1
+    nextVersion: 
+    recommendedVersion: 
+    isDeprecated: 0
+    deprecationMessage: 
+  isDeprecated: 0
+  deprecationMessage: 
+  git:
+    hash: 
+    revision: 
+  upmReserved: 
+  assetStore:
+    productId: 
+  fingerprint: 56a930affa1e4462d3595b5c19a1c2a4bf2015d2
+  editorCompatibility:
+    compatibilityLevel: 0
+    minimumPackageVersion: 2.0.1
+    minimumUnityVersion: 2018.4.0a1
 - packageId: com.unity.render-pipelines.core@17.0.4
   testable: 0
   isDirectDependency: 0
   version: 17.0.4
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.render-pipelines.core@2c53672ff4c2
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.render-pipelines.core@2c53672ff4c2
   assetPath: Packages/com.unity.render-pipelines.core
   name: com.unity.render-pipelines.core
   displayName: Core RP Library
@@ -4630,7 +4632,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 17.0.4
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.shadergraph@0e6324a629e1
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.shadergraph@0e6324a629e1
   assetPath: Packages/com.unity.shadergraph
   name: com.unity.shadergraph
   displayName: Shader Graph
@@ -4833,7 +4835,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 17.0.3
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.render-pipelines.universal-config@fa63c96d3e1a
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.render-pipelines.universal-config@fa63c96d3e1a
   assetPath: Packages/com.unity.render-pipelines.universal-config
   name: com.unity.render-pipelines.universal-config
   displayName: Universal RP Config
@@ -4931,7 +4933,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 4.9.3
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.searcher@1e17ce91558d
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.searcher@1e17ce91558d
   assetPath: Packages/com.unity.searcher
   name: com.unity.searcher
   displayName: Searcher
@@ -5018,7 +5020,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 1.8.19
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.burst@7a907cf5a459
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.burst@7a907cf5a459
   assetPath: Packages/com.unity.burst
   name: com.unity.burst
   displayName: Burst
@@ -5246,7 +5248,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 2.5.1
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.collections@56bff8827a7e
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.collections@56bff8827a7e
   assetPath: Packages/com.unity.collections
   name: com.unity.collections
   displayName: Collections
@@ -5421,7 +5423,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 1.0.1
   source: 2
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.rendering.light-transport@307bc27a498f
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.rendering.light-transport@307bc27a498f
   assetPath: Packages/com.unity.rendering.light-transport
   name: com.unity.rendering.light-transport
   displayName: Unity Light Transport Library
@@ -5517,7 +5519,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 1.11.4
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.nuget.mono-cecil@d6f9955a5d5f
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.nuget.mono-cecil@d6f9955a5d5f
   assetPath: Packages/com.unity.nuget.mono-cecil
   name: com.unity.nuget.mono-cecil
   displayName: Mono Cecil
@@ -5599,7 +5601,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 3.0.3
   source: 1
-  resolvedPath: C:\Users\ksawi\Desktop\autko\projektAuto\Library\PackageCache\com.unity.test-framework.performance@fb0dc592af8b
+  resolvedPath: C:\Users\CORSAIR\Desktop\C#Projekt\projektAuto\Library\PackageCache\com.unity.test-framework.performance@fb0dc592af8b
   assetPath: Packages/com.unity.test-framework.performance
   name: com.unity.test-framework.performance
   displayName: Performance testing API
