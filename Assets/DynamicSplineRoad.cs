@@ -4,10 +4,10 @@ using UnityEngine;
 public class DynamicSplineRoad : MonoBehaviour
 {
     public Transform car;
-    public float spawnDistance = 50f;
+    public float spawnDistance = 100f;
     public float pointSpacing = 10f;
-    public int maxPoints = 20;
-    public float maxDeviationAngle = 30f;
+    public int maxPoints = 50;
+    public float maxDeviationAngle = 15f;
 
     private List<Vector3> controlPoints = new List<Vector3>();
     private Vector3 currentDirection;
@@ -42,7 +42,6 @@ public class DynamicSplineRoad : MonoBehaviour
             car.position :
             GetLastPoint() + currentDirection * pointSpacing;
 
-        // Losowe odchylenie kierunku
         currentDirection = Quaternion.Euler(
             0,
             Random.Range(-maxDeviationAngle, maxDeviationAngle),
